@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='style.css') }}">
+
+        {% if title %}
+        <title>{{ title }} - Jay</title>
+        {% else %}
+        <title>Welcome To My Site! - jshe2304</title>
+        {% endif %}
+    </head>
+    
+    <body>
+        <div class = "navbar">
+            <h1>jshe.com</h1>
+            <div>
+                <input type="button" class="button navbarbutton" onclick="location.href='/home';" value="Home" />
+                <input type="button" class="button navbarbutton" onclick="location.href='generate_definitions';" value="Generate Definitions For A List Of Terms" />
+            </div>
+        </div>
+        <div class = "content">
+            {% block content %}{% endblock %}
+        </div>
+        
+        <footer>
+            <p>Email: <a href="mailto:jshe2304@gmail.com" style="color: white;">jshe2304@gmail.com</a></p>
+        </footer>
+    </body>
+</html>

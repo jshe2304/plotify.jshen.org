@@ -1,0 +1,92 @@
+html, body {
+    padding: 0;
+    margin: 0;
+
+    background-color: black;
+
+    font-family: Calibri;
+    color: white;
+    font-size: 16px;
+
+    scroll-behavior: smooth;
+}
+
+div.navbar {
+    background-color : rgb(60, 69, 89);
+
+    padding: 2em;
+    padding-left: 3em;
+    padding-right: 3em;
+
+    margin-bottom: 2em;
+}
+
+div.inner {
+    background-color: rgb(30, 30, 30);
+
+    margin: auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    width: 50%;
+    min-width: 25em;
+
+    padding: 2em;
+    padding-left: 3em;
+    padding-right: 3em;
+}
+
+div.standout {
+    background-color: rgb(50, 50, 50);
+    padding: 1em;
+    margin-right: 50%;
+    margin-top: 1em;
+    border-radius: 1em;
+}
+
+div.section {
+    margin-top: 2em;
+    margin-right: 50%;
+}
+
+input[type=button], input[type=submit].button {
+    background-color: rgb(108, 127, 144);
+    
+    color: white;
+    text-align: center;
+    font-weight: bold;
+
+    padding: 1em 1em;
+    border: none;
+    border-radius: 0.5em;
+}
+
+details {
+    margin: 1em;
+}
+
+summary.formsummary {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+summary.helpsummary {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+:is(h1, h2, h3, h4, h5, h6) {
+    color : rgb(178, 197, 214)
+}
+
+footer {
+    background-color : rgb(60, 69, 89);
+
+    padding: 2em;
+    padding-left: 3em;
+    padding-right: 3em;
+    
+    margin:auto;
+    margin-top: 2em;
+}
+

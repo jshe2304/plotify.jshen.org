@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div>
+		<div class="inner" id="form">
+			<h1>Generate Definitions For A List Of Terms</h1>
+			<h3 style="color:white;">This website is capable of generating definitions for a list of terms and outputting the terms and their definitions in an easy to read PDF format. The PDF is formatted properly so that it can be copied into Quizlet to create a flashcard set.</h3>
+			<hr>
+			<form action="" method="POST" enctype="multipart/form-data" novalidate>
+				{{ form.hidden_tag() }}
+				<div class="section">
+					<h3>{{ form.def_source.label }}</h3>
+					<details>
+						<summary class="formsummary">Details</summary>
+						<p>Where the definition will be found. If the chosen source does not recognize the term, the other source will be used. If neither source recognizes it, the definition will be left blank.</p>
+					</details>
+					<div class="standout">
+						{% for subfield in form.def_source %}
+							<tr>
+								<td>{{ subfield }}</td>
+								<td>{{ subfield.label }}</td>
+								<br>
+							</tr>
+						{% endfor %}
+					</div>
+				</div>
+
+				<div class="section">
+					<h3>{{ form.omit_term.label }}</h3>
+					<details>
+						<summary class="formsummary">Details</summary>
+						<p>Useful if you do not want to see the term when studying, such as when you are looking at the definition to guess the term.</p>
+					</details>
+					<div class="standout">
+						{{ form.omit_term }} Omit
+					</div>
+				</div>
+
+				<div class="section">
+					<h3>{{ form.file.label }} (DOCX, PDF, TXT)</h3>
+					<details>
+						<summary class="formsummary">Details</summary>
+						<p>File with terms to be defined.</p>
+						<p>Must be DOCX, PDF, TXT</p>
+						<p>Must not exceed 20mb for security and performance reasons. Large files may be broken down into smaller files then submitted.</p>
+					</details>
+					<div class="standout">
+						{{ form.file(class_="formbutton") }}
+					</div>
+				</div>
+
+				<div class="section">
+					<h3>{{ form.separator.label }}</h3>
+					<details>
+						<summary class="formsummary">Details</summary>
+						<p>What character separates the terms?</p>
+						<p>Inconsistent separating characters may lead to issues with the final definitions</p>
+					</details>
+					<div class="standout">
+						{% for subfield in form.separator %}
+							<tr>
+								<td>{{ subfield }}</td>
+								<td>{{ subfield.label }}</td>
+								<br>
+							</tr>
+						{% endfor %}
+					</div>
+				</div>
+				
+				<div class = "section" style="background-color: red;">
+					{% with messages = get_flashed_messages() %}
+						{% if messages %}
+							{% for message in messages %}
+								<span style="margin: 1em;">{{ message }}</span>
+							{% endfor %}
+						{% endif %}
+					{% endwith %}
+				</div>
+
+				<div class="section">
+					{{ form.submit(class_="button formsubmitbutton") }}
+				</div>
+			</form>
+
+			<a onClick="document.getElementById('help').scrollIntoView();">
+				<span style="color: rgb(110, 110, 255);">Questions? Need Help?</span>
+			</a>
+		</div>
+
+		<div class="inner" id="help">
+			<h1 style="margin-bottom: 1em;">Help and FAQ</h1>
+
+			<details>
+				<summary class="helpsummary">How Do I Turn This PDF Into A Quizlet Set?</summary>
+				<p>The PDF is already formatted properly for input into Quizlet, you just need to copy it into existing functions of the website.</p>
+				<ol>
+					<li>Navigate to <b style="font-style: italic;">Create</b></li>
+					<li>Create a <b style="font-style: italic;">Study Set</b></li>
+					<li>Select the option to <b style="font-style: italic;">Import From Word, Excel, Google Docs, etc.</b></li>
+					<li>Copy the entire PDF (Ctrl-a) and paste into the box.</li>
+					<li>In the <b style="font-style: italic;">Between term and definition</b> custom field, type <b>\n</b></li>
+					<li>In the <b style="font-style: italic;">Between cards</b> custom field, type <b>\n-\n</b></li>
+					<li>Click <b style="font-style: italic;">Import</b></li>
+					<li>View your new flashcard set!</li>
+				</ol>
+			</details>
+
+			<details>
+				<summary class="helpsummary">File Taking a Long Time to Process</summary>
+				<p>Don't worry! Especially if your list of words is long, it is supposed to take some time.</p>
+				<p>Remember, the server has to search through massive databases to find each definition. Wikipedia alone has over 50 million!</p>
+				<p>Estimate around 3-4 seconds per term!</p>
+			</details>
+
+			<details>
+				<summary class="helpsummary">File Not Processing</summary>
+				<p>Check around your browser, see if you can find any indications that the page is loading or working somehow, as that indicates your file is being processed.</p>
+				<p>If there is no such indication, check:</p> 
+				<ul>
+					<li>All fields are filled</li>
+					<li>Your file is not corrupted</li>
+					<li>Your file does not contain characters, images, etc. that may disturb the program</li>
+				</ul>
+			</details>
+
+			<details>
+				<summary class="helpsummary">Definitions are Wrong, Inaccurate, or Nonexistent</summary>
+				<p>First, try changing the source, as each source may yield different definitions. The dictionary is better for vocabulary words while Wikipedia is better for historical terms, scientific facts, etc.</p>
+				<p>Second, try checking the spelling and formatting of your terms.</p>
+				<p>If all else fails, send me a message! The meaner the better! </p>
+			</details>
+
+			<details>
+				<summary class="helpsummary">Error Messages</summary>
+				<dl>
+					<dt>Error 413</dt>
+					<dd>File was too large (>20mb)</dd>
+				</dl>
+			</details>
+		</div>
+	</div>
+{% endblock %}
