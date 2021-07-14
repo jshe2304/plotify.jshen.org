@@ -39,9 +39,9 @@ def generatedefinitions():
             flash("Field Required")
     return render_template('generate_definitions.html', title = 'Generate Definitions For List of Terms', form=form)
 
-@app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
-def spotifyplaylistutilities_login():
-    CLIENT_ID = '4ed7461ce6fc46b9b5fc1cff6e08d2a5'
+#@app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
+#def spotifyplaylistutilities_login():
+    #CLIENT_ID = '4ed7461ce6fc46b9b5fc1cff6e08d2a5'
 
     #if request.method == "POST":
         
