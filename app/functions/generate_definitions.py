@@ -9,6 +9,7 @@ from fpdf import FPDF
 
 def dictionary_request(term):
     definition = None
+    partofspeech = None
 
     baseurl = "https://api.dictionaryapi.dev/api/v2/entries/en_US/"
 
@@ -17,7 +18,8 @@ def dictionary_request(term):
     if "title" in json:
         definition = ""
     else:
-        definition = json[0]['meanings'][0]['definitions'][0]['definition']
+        partofspeech = json[0]['meanings'][0]['partOfSpeech']
+        definition = "(" + partofspeech + ") " + json[0]['meanings'][0]['definitions'][0]['definition']
 
     return definition
 

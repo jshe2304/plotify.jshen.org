@@ -2,23 +2,35 @@ html, body {
     padding: 0;
     margin: 0;
 
-    background-color: black;
+    background-color: rgb(20, 20, 20);
 
     font-family: Calibri;
     color: white;
     font-size: 16px;
 
     scroll-behavior: smooth;
+
+    position: relative;
+    min-height: 100vh;
 }
 
 div.navbar {
     background-color : rgb(60, 69, 89);
+    
+    padding: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
 
-    padding: 2em;
-    padding-left: 3em;
-    padding-right: 3em;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+}
 
-    margin-bottom: 2em;
+div.content {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
 }
 
 div.inner {
@@ -39,14 +51,13 @@ div.inner {
 div.standout {
     background-color: rgb(50, 50, 50);
     padding: 1em;
-    margin-right: 50%;
-    margin-top: 1em;
+    padding-right: 1.5em;
+    display: inline-block;
     border-radius: 1em;
 }
 
 div.section {
-    margin-top: 2em;
-    margin-right: 50%;
+    margin-top: 1em;
 }
 
 input[type=button], input[type=submit].button {
@@ -65,12 +76,7 @@ details {
     margin: 1em;
 }
 
-summary.formsummary {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-summary.helpsummary {
+#help summary {
     font-size: 20px;
     font-weight: bold;
 }
@@ -82,11 +88,83 @@ summary.helpsummary {
 footer {
     background-color : rgb(60, 69, 89);
 
-    padding: 2em;
-    padding-left: 3em;
-    padding-right: 3em;
+    padding: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
     
     margin:auto;
-    margin-top: 2em;
+    margin-top: 2rem;
+
+    position: fixed;
+    bottom: 0;
+
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;  
 }
 
+a {
+    text-decoration: none;
+}
+
+.tooltip {
+    display: inline-block;
+    height: 1.5em;
+    width: 1.5em;
+    line-height: 1.5em;
+
+    -moz-border-radius: 0.75em; /* or 50% */
+    border-radius: 0.75em; /* or 50% */
+
+    margin-left: 2em;
+
+    text-align: center;
+    
+    background-color: rgb(50, 50, 50);
+    font-size: 0.75em;
+}
+  
+  /* Tooltip text */
+.tooltip .tooltiptext {
+    content: " ";
+    margin-left: 2em;
+    line-height: 1.25em;
+    font-weight: lighter;
+    width: 20em;
+    visibility: hidden;
+    background-color: rgb(50, 50, 50);
+    text-align: left;
+    padding: 1em;
+    border-radius: 6px;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 15%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -0.6em;
+    border-width: 0.6em;
+    border-style: solid;
+    border-color: transparent rgb(50, 50, 50) transparent transparent;
+}
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+
+ul.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li.navbar {
+    display: inline;
+}

@@ -3,19 +3,20 @@
         <link rel = "stylesheet" href = "{{ url_for('static', filename='style.css') }}">
 
         {% if title %}
-        <title>{{ title }} - Jay</title>
+        <title>{{ title }} - jshen</title>
         {% else %}
-        <title>Welcome To My Site! - jshe2304</title>
+        <title>Welcome To My Site! - jshen</title>
         {% endif %}
     </head>
     
     <body>
         <div class = "navbar">
-            <h1>jshe.com</h1>
-            <div>
-                <input type="button" class="button navbarbutton" onclick="location.href='/home';" value="Home" />
-                <input type="button" class="button navbarbutton" onclick="location.href='generate_definitions';" value="Generate Definitions For A List Of Terms" />
-            </div>
+            <ul class="navbar">
+                <li class="navbar" style="margin-right: 2em;"><h1 style="display: inline;" onclick="location.href='/home';">jshen.org</h1></li>
+                <li class="navbar"><input type="button" class="button navbarbutton" onclick="location.href='/home';" value="Home" /></li>
+                <li class="navbar" style="margin-left:1em; margin-right: 1em;"><h3 style="display:inline;">Utilities</h3></li>
+                <li class="navbar"><input type="button" class="button navbarbutton" onclick="location.href='generate_definitions';" value="Generate Definitions For A List Of Terms"/></li>
+            </ul>
         </div>
         <div class = "content">
             {% block content %}{% endblock %}
