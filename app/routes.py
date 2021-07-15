@@ -4,22 +4,18 @@ from flask import Flask, render_template, flash, request, redirect, send_from_di
 from flask.helpers import url_for
 
 from app import app
-from app.forms import GD_Form
+from app.forms import DefGeneratorForm
 from werkzeug.utils import secure_filename
-from app.functions.generate_definitions import *
+from app.functions.defgenerator import *
 
 @app.route('/')
 @app.route('/home')
 def home():
     return render_template('home.html', title = 'Home')
 
-@app.route('/version2')
-def version2():
-    return redirect('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-
-@app.route('/generate_definitions', methods=['POST', 'GET'])
+@app.route('/definition_generator', methods=['POST', 'GET'])
 def generatedefinitions():
-    form = GD_Form()
+    form = DefGeneratorForm()
     if request.method == 'POST':
         if form.validate_on_submit():
             def_source = form.def_source.data
@@ -37,7 +33,7 @@ def generatedefinitions():
                 flash ("File Extension Not Supported")
         else:
             flash("Field Required")
-    return render_template('generate_definitions.html', title = 'Generate Definitions For List of Terms', form=form)
+    return render_template('def_generator.html', title = 'Generate Definitions For List of Terms', form=form)
 
 #@app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
 #def spotifyplaylistutilities_login():

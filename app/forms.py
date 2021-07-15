@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import FileField, RadioField, SubmitField, BooleanField
 from wtforms.validators import DataRequired
 
-class GD_Form(FlaskForm):
+class DefGeneratorForm(FlaskForm):
     def_source = RadioField('Definition Source', choices=['Dictionary', 'Wikipedia'], validators=[DataRequired()])
     omit_term = BooleanField("Omit Term From Definition")
     file = FileField('Submit File', validators=[DataRequired()])
