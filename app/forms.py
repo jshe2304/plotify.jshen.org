@@ -8,7 +8,4 @@ class DefGeneratorForm(FlaskForm):
     file = FileField('Submit File', validators=[DataRequired()])
     separator = RadioField('Separator', choices=['New Line', 'Comma (,)', 'Period (.)', 'Semicolon (;)', 'Colon (:)', 'Slash (/)', 'Pipe (|)'], validators=[DataRequired()])
     submit = SubmitField('Process File')
-
-#class spu_login_form(FlaskForm):
-    #None
     

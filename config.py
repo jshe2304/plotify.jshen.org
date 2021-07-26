@@ -12,6 +12,6 @@ class Config (object):
     ALLOWED_EXTENSIONS = ['docx', 'pdf', 'txt']
     MAX_CONTENT_LENGTH = 20 * 1024 * 1024
 
-
+    
     #UPLOAD_FOLDER = "client/upload"
     #DOWNLOAD_FOLDER = "client/download"

@@ -1,12 +1,12 @@
 import os
-import requests
-from flask import Flask, render_template, flash, request, redirect, send_from_directory, abort, session
 from flask.helpers import url_for
+from flask import render_template, flash, request, redirect, send_from_directory
 
 from app import app
 from app.forms import DefGeneratorForm
 from werkzeug.utils import secure_filename
 from app.functions.defgenerator import *
+from app.functions.spotifyutil import *
 
 @app.route('/')
 @app.route('/home')
@@ -35,9 +35,34 @@ def generatedefinitions():
             flash("Field Required")
     return render_template('def_generator.html', title = 'Generate Definitions For List of Terms', form=form)
 
-#@app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
-#def spotifyplaylistutilities_login():
-    #CLIENT_ID = '4ed7461ce6fc46b9b5fc1cff6e08d2a5'
+@app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
+def spotifyutilitieshome():
+    return render_template('spotify_home.html', title='Spotify Utilities')
 
-    #if request.method == "POST":
-        
+@app.route('/spotify-playlist-utilities/login')
+def spotifyutilitieslogin():
+    query = oauth_url()
+    return redirect(query)
+
+@app.route('/spotify-playlist-utilities/callback')
+def spotifyutilitiescallback():
+    response = request.args
+
+    if len(response) == 0 or 'error' in response:
+        return redirect("/spotify-playlist-utilities")
+
+    code = response['code']
+
+    authorized_token = request_authorized_token(code)
+
+    set_token(authorized_token)
+
+    user = current_user(authorized_token)
+
+    print (user)
+
+    return redirect(url_for('spotifyutilities', username=user['id']))
+
+@app.route('/spotify-playlist-utilities/<username>', methods=['POST', 'GET'])
+def spotifyutilities(username):
+    return render_template('home.html')

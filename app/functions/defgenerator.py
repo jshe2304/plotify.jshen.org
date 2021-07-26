@@ -6,6 +6,7 @@ import pdfplumber
 import docx
 from app import app
 from fpdf import FPDF
+from urllib.parse import quote
 
 def dictionary_request(term):
     definition = None
@@ -13,7 +14,7 @@ def dictionary_request(term):
 
     baseurl = "https://api.dictionaryapi.dev/api/v2/entries/en_US/"
 
-    json = requests.get(baseurl + term).json()
+    json = requests.get(baseurl + quote(term)).json()
 
     if "title" in json:
         definition = ""
@@ -28,7 +29,7 @@ def wikipedia_request(term):
 
     baseurl = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exsentences=2&explaintext&redirects=1&titles="
 
-    json = requests.get(baseurl + term).json()
+    json = requests.get(baseurl + quote(term)).json()
     json = json['query']['pages']
 
     if "-1" in json:
@@ -100,19 +101,26 @@ def generate_definitions(def_source, omit_term, separator, filename):
 
     file_text = filecontent(filename)
 
+    print (file_text)
+
     separator = separator[-2]
+
+    raw_terms = []
+
+    if separator == 'n':
+        raw_terms = file_text.split("\n")
+    else:
+        raw_terms = file_text.split(separator)
 
     terms = []
 
-    if separator == 'n':
-        terms = file_text.split("\n")
-    else:
-        terms = file_text.split(separator)
+    for raw_term in raw_terms:
+        term = raw_term.strip().replace("”", "").replace("“", "")
 
-    for term in terms:
-        term = term.strip()
-        if term == "":
-            terms.remove(term)
+        if term != "":
+            terms.append(term)
+
+    print (terms)
 
     dictionary = dict.fromkeys(terms)
 
@@ -133,6 +141,8 @@ def generate_definitions(def_source, omit_term, separator, filename):
             definition = ignore_case.sub("_____", definition)
 
         dictionary[term] = definition
+
+    #print(dictionary)
 
     formatted = format_dictionary(dictionary)
 
