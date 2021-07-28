@@ -1,10 +1,9 @@
-import re
+from re import L
 import requests
-import math
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
+import random
 
-from requests.api import head
-from werkzeug.utils import redirect
+from app import app
 
 """
 Objectives:
@@ -14,17 +13,16 @@ Shuffle Playlist
 
 """
 
-CLIENT_ID = '4ed7461ce6fc46b9b5fc1cff6e08d2a5'
-CLIENT_SECRET = '97abd660e7a94dc587930582a691b22b'
+#Client Credentials
+CLIENT_ID = app.config['SPOTIFY_CLIENT_ID']
+CLIENT_SECRET = app.config['SPOTIFY_CLIENT_SECRET']
 
+#URLs
 BASE_URL = 'https://api.spotify.com/v1/'
 AUTH_URL = 'https://accounts.spotify.com/api/token'
-OAUTH_URL = 'https://accounts.spotify.com/authorize?'
+OAUTH_URL = 'https://accounts.spotify.com/authorize'
 
-response_type = "code"
-redirect_uri = "http://localhost:5000/spotify-playlist-utilities/callback"
-scopes = "user-library-read user-library-modify playlist-read-private playlist-modify-private playlist-modify-public user-library-read"
-
+#Base Token and Header
 auth_response = requests.post(AUTH_URL, {
     'grant_type': 'client_credentials',
     'client_id': CLIENT_ID,
@@ -33,19 +31,24 @@ auth_response = requests.post(AUTH_URL, {
 auth_response_data = auth_response.json()
 access_token = auth_response_data['access_token']
 
+#OAuth Query Parameters
+response_type = "code"
+redirect_uri = "http://localhost:5000/spotify-playlist-utilities/callback"
+scopes = "ugc-image-upload user-read-recently-played user-top-read user-read-playback-position user-read-currently-playing streaming playlist-modify playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative user-follow-read user-library-modify user-library-read user-read-email user-read-private"
 
+
+#OAuth Functions
 
 def oauth_url():
     params = {
         'client_id' : CLIENT_ID,
         'response_type' : response_type,
         'redirect_uri' : redirect_uri,
-        'scopes' : scopes,
     }
 
-    query = urlencode(params)
+    query = urlencode(params) + "&scope=" + quote(scopes)
 
-    return OAUTH_URL + query
+    return OAUTH_URL + "?" + query
 
 def request_authorized_token(code):
     params = {
@@ -58,8 +61,6 @@ def request_authorized_token(code):
 
     response = requests.post(AUTH_URL, params).json()
 
-    #print (response)
-
     return response['access_token']
 
 def set_token(new_token):
@@ -71,48 +72,129 @@ def get_header():
         'Authorization': 'Bearer {token}'.format(token=access_token)
     }
 
-def current_user(token):
 
+def current_user():
     user = requests.get(BASE_URL + "me", headers=get_header()).json()
 
     return user
 
-def list_of_tracks(playlist_id, output):
+def authenticated_user(username):
+    user = current_user()
+    #print(user['id'])
+    #print(username)
+    if user['id'] == username:
+        return True
+    
+    return False
+
+def get_uid():
+    return current_user()['uri']
+
+def unpage (json):
+    if 'items' not in json and 'next' not in json:
+        return None
+    
+    if 'next' == None:
+        return json['items']
+
+    items = json['items']
+
+    next = json['next']
+
+    while next != None:
+        next_json = requests.get(next, headers=get_header()).json()
+        items += next_json['items']
+        next = next_json['next']
+
+    return items
+
+def list_of_playlists():
+    #Playlist Name: list_json['name']
+    #Playlist ID: list_json['id']
+
+    paging_object = requests.get(BASE_URL + "me/playlists?limit=50", headers=get_header()).json()
+
+    playlists = unpage(paging_object)
+
+    return playlists
+
+def valid_playlist(playlist_id):
+    playlists = list_of_playlists()
+
+    for playlist in playlists:
+        if playlist['id'] == playlist_id:
+            return True
+
+    return False
+
+def valid_url(username, playlist):
+    if not authenticated_user(username):
+        return False
+    if not valid_playlist(playlist):
+        False
+    return None
+            
+def list_of_tracks(playlist_id):
+    #Test playlist: 6Sko93pvXQ4ByuEJXHAcKT
+    #Track Info: track_json['track']
+    #Track Name: track_json['track']['name']
+    #Track id: track_json['track']['id']
+
     songs = []
 
-    if playlist_id == "" and len(playlist_id) != 22:
+    if playlist_id == "" or len(playlist_id) != 22:
         return songs
 
-    playlist = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=get_header()).json()
+    paging_object = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=get_header()).json()
     
-    total = playlist['total']
-    
-    for i in range(int(math.ceil(total/100))):
-        items = playlist['items']
-        for song in items:
-            if output == "name":
-                songs.append(song['track']['name'])
-            elif output == "uri":
-                songs.append(song['track']['uri'])
+    playlist = unpage(paging_object)
 
-        if playlist['next'] != None:
-            playlist = requests.get(playlist['next'], headers=get_header()).json()
-    
-    return songs
+    uris = []
 
-#songs = list_of_tracks("1HDBhTV7Bc0lx94M630bfm", "uri")
-#print (songs)
-#print (len(songs))
-#print (len("1HDBhTV7Bc0lx94M630bfm"))
+    for track in playlist:
+        uris.append(track['track']['uri'])
 
-def create_playlist (user_id, name, description):
+    return uris
+
+def create_playlist (name, description):
     data = {
-        name: name,
-        description: description
+        'name': name,
+        'description' : description,
     }
 
-    response = requests.post(BASE_URL + "users/" + user_id + "/playlists", data=data, headers=get_header())
+    uid = current_user()['id']
 
-    return response.content
+    print (uid)
+
+    response = requests.post(BASE_URL + "users/" + uid + "/playlists", json=data, headers=get_header()).json()
+
+    return response
+
+def chunk(n, lst):
+    sections = []
+
+    for i in range(0, len(lst), n):
+        sections.append(lst[i:i + n])
+
+    return sections
+
+def shuffle_playlist(playlist_id):
+    playlist_json = requests.get(BASE_URL + "playlists/" + playlist_id, headers=get_header()).json()
+
+    playlist_name = playlist_json['name']
+    playlist_description = playlist_json['description']
+
+    tracks = list_of_tracks(playlist_id)
+
+    new_playlist = create_playlist("Shuffled - " + playlist_name, playlist_description)
+
+    random.shuffle(tracks)
+
+    chunks = chunk(50, tracks)
+
+    for chnk in chunks:
+        uris = {'uris':chnk}
+        requests.post(BASE_URL + "playlists/" + new_playlist['id'] + "/tracks", json=uris, headers=get_header())
+
 
 

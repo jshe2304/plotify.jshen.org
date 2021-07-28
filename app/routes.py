@@ -37,7 +37,7 @@ def generatedefinitions():
 
 @app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
 def spotifyutilitieshome():
-    return render_template('spotify_home.html', title='Spotify Utilities')
+    return render_template('/spotify/spotify_home.html', title='Spotify Utilities')
 
 @app.route('/spotify-playlist-utilities/login')
 def spotifyutilitieslogin():
@@ -46,6 +46,7 @@ def spotifyutilitieslogin():
 
 @app.route('/spotify-playlist-utilities/callback')
 def spotifyutilitiescallback():
+
     response = request.args
 
     if len(response) == 0 or 'error' in response:
@@ -54,15 +55,36 @@ def spotifyutilitiescallback():
     code = response['code']
 
     authorized_token = request_authorized_token(code)
-
     set_token(authorized_token)
 
-    user = current_user(authorized_token)
+    user = current_user()
 
-    print (user)
-
-    return redirect(url_for('spotifyutilities', username=user['id']))
+    return redirect('/spotify-playlist-utilities/' + user['id'])
 
 @app.route('/spotify-playlist-utilities/<username>', methods=['POST', 'GET'])
 def spotifyutilities(username):
-    return render_template('home.html')
+    if not authenticated_user(username):
+        return redirect('/spotify-playlist-utilities')
+
+    playlists = list_of_playlists()
+    return render_template('/spotify/spotify_utilities.html', playlists=playlists, username=username)
+
+@app.route('/spotify-playlist-utilities/<username>/<playlist_id>', methods = ['POST', 'GET'])
+def spotifyplaylist(username, playlist_id):
+    if not authenticated_user(username):
+        return redirect('/spotify-playlist-utilities')
+    if not valid_playlist(playlist_id):
+        return redirect('/spotify-playlist-utilities/' + username)
+
+    return render_template('/spotify/spotify_playlist.html', username=username, playlist_id=playlist_id)
+
+@app.route('/spotify-playlist-utilities/<username>/<playlist_id>/shuffle', methods = ['POST', 'GET'])
+def spotifyshuffle(username, playlist_id):
+    if not authenticated_user(username):
+        return redirect('/spotify-playlist-utilities')
+    if not valid_playlist(playlist_id):
+        return redirect('/spotify-playlist-utilities/' + username)
+
+    shuffle_playlist(playlist_id)
+
+    return redirect('/spotify-playlist-utilities/' + username + "/" + playlist_id)

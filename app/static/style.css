@@ -6,7 +6,6 @@ html, body {
 
     font-family: Calibri;
     color: white;
-    font-size: 16px;
 
     scroll-behavior: smooth;
 
@@ -60,7 +59,7 @@ div.section {
     margin-top: 1em;
 }
 
-input[type=button], input[type=submit].button {
+input[type=button], input[type=submit], input[type=file].button {
     background-color: rgb(108, 127, 144);
     
     color: white;
@@ -70,6 +69,10 @@ input[type=button], input[type=submit].button {
     padding: 1em 1em;
     border: none;
     border-radius: 0.5em;
+}
+
+input[type=button], input[type=submit], input[type=file].button :hover {
+    background-color: rgb(88, 107, 124);
 }
 
 details {

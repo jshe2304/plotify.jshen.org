@@ -12,6 +12,9 @@ class Config (object):
     ALLOWED_EXTENSIONS = ['docx', 'pdf', 'txt']
     MAX_CONTENT_LENGTH = 20 * 1024 * 1024
 
-    
+    SPOTIFY_CLIENT_ID = '4ed7461ce6fc46b9b5fc1cff6e08d2a5'
+    SPOTIFY_CLIENT_SECRET = '97abd660e7a94dc587930582a691b22b'
+
+
     #UPLOAD_FOLDER = "client/upload"
     #DOWNLOAD_FOLDER = "client/download"

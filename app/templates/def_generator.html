@@ -26,7 +26,7 @@
 						{{ form.def_source.label }}
 						<span class="tooltip">
 							?
-							<span class="tooltiptext">Where the definition will be found. If the chosen source does not recognize the term, the other source will be used. If neither source recognizes it, the definition will be left blank.</span>
+							<span class="tooltiptext">Where the definition will be found. Select Dictionary for vocabulary terms and Wikipedia for most other cases such as history, science, etc. If the chosen source does not recognize the term, the other source will be used. If neither source recognizes it, the definition will be left blank.</span>
 						</span>
 					</h3>
 					<div class="standout">
@@ -71,7 +71,7 @@
 						{% endfor %}
 					</div>
 				</div>
-				
+
 				<div id="flash" class = "section" style="background-color: red;">
 					{% with messages = get_flashed_messages() %}
 						{% if messages %}
@@ -90,7 +90,7 @@
 			<a onClick="document.getElementById('help').scrollIntoView();">
 				<span style="color: rgb(110, 110, 255);">Questions? Need Help?</span>
 			</a>
-			
+
 		</div>
 
 		<div class="inner" id="help">

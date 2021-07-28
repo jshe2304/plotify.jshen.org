@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <div class="inner">
+            <h3>{{ playlist_id }}</h3>
+            <a href="/spotify-playlist-utilities/{{ username }}/{{ playlist_id }}/shuffle">Shuffle</a>
+        </div>
+    </div>
+{% endblock %}
