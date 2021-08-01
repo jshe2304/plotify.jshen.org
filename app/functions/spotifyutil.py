@@ -3,13 +3,25 @@ import requests
 from urllib.parse import urlencode, quote
 import random
 
+from requests.api import get, head
+
 from app import app
 
 """
 Objectives:
 
 Merge playlists
-Shuffle Playlist
+Reorganize
+    Shuffle
+    Alphabetical
+    Reverse
+    Song Name
+    Song Artist
+    Date Released
+    Popularity
+
+Filter By Characteristics
+
 
 """
 
@@ -34,8 +46,10 @@ access_token = auth_response_data['access_token']
 #OAuth Query Parameters
 response_type = "code"
 redirect_uri = "http://localhost:5000/spotify-playlist-utilities/callback"
-scopes = "ugc-image-upload user-read-recently-played user-top-read user-read-playback-position user-read-currently-playing streaming playlist-modify playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative user-follow-read user-library-modify user-library-read user-read-email user-read-private"
+scopes = "ugc-image-upload user-read-recently-played user-top-read playlist-modify playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative user-follow-read user-library-modify user-library-read user-read-private"
 
+albums = []
+playlists = []
 
 #OAuth Functions
 
@@ -72,6 +86,7 @@ def get_header():
         'Authorization': 'Bearer {token}'.format(token=access_token)
     }
 
+#URL Authentication
 
 def current_user():
     user = requests.get(BASE_URL + "me", headers=get_header()).json()
@@ -87,8 +102,17 @@ def authenticated_user(username):
     
     return False
 
+def valid_playlist(playlist_id):
+    for playlist in playlists:
+        if playlist['id'] == playlist_id:
+            return True
+
+    return False
+
 def get_uid():
     return current_user()['uri']
+
+#Useful JSON Functions
 
 def unpage (json):
     if 'items' not in json and 'next' not in json:
@@ -108,32 +132,16 @@ def unpage (json):
 
     return items
 
-def list_of_playlists():
-    #Playlist Name: list_json['name']
-    #Playlist ID: list_json['id']
+def chunk(n, lst):
+    sections = []
 
-    paging_object = requests.get(BASE_URL + "me/playlists?limit=50", headers=get_header()).json()
+    for i in range(0, len(lst), n):
+        sections.append(lst[i:i + n])
 
-    playlists = unpage(paging_object)
+    return sections
 
-    return playlists
+#Low Level API Functions
 
-def valid_playlist(playlist_id):
-    playlists = list_of_playlists()
-
-    for playlist in playlists:
-        if playlist['id'] == playlist_id:
-            return True
-
-    return False
-
-def valid_url(username, playlist):
-    if not authenticated_user(username):
-        return False
-    if not valid_playlist(playlist):
-        False
-    return None
-            
 def list_of_tracks(playlist_id):
     #Test playlist: 6Sko93pvXQ4ByuEJXHAcKT
     #Track Info: track_json['track']
@@ -156,6 +164,80 @@ def list_of_tracks(playlist_id):
 
     return uris
 
+def get_albums():
+    return albums
+
+def get_playlists():
+    return playlists
+
+def request_albums():
+    paging_object = requests.get(BASE_URL + "me/albums", headers=get_header()).json()
+
+    #Album objects wrapped in SavedAlbum wrapper object
+    #savedalbumobject['album']
+    saved_albums = unpage(paging_object)
+
+    albums = []
+
+    for saved in saved_albums:
+        albums.append(saved['album'])
+
+    return albums
+
+def request_playlists():
+    #Playlist Name: list_json['name']
+    #Playlist ID: list_json['id']
+
+    paging_object = requests.get(BASE_URL + "me/playlists?limit=50", headers=get_header()).json()
+
+    playlists = unpage(paging_object)
+
+    return playlists
+
+def refresh_library():
+    global albums
+    global playlists
+
+    albums = request_albums()
+    playlists = request_playlists()
+
+def public_playlists():
+    public = []
+
+    for playlist in playlists:
+        if playlist['public'] == True:
+            public.append(playlist)
+
+    return public
+
+def private_playlists():
+
+    private = []
+
+    for playlist in playlists:
+        if playlist['public'] == False:
+            private.append(playlist)
+
+    return private
+
+def get_album(album_id):
+    return requests.get(BASE_URL + "albums/" + album_id, headers=get_header()).json()
+
+def get_album_artists(album_id):
+    album = get_album(album_id)
+
+    artists = []
+
+    for artist in album['artists']:
+        artists.append(artist['name'])
+
+    return ", ".join(artists)
+
+def get_playlist(playlist_id):
+    return requests.get(BASE_URL + "playlists/" + playlist_id, headers=get_header()).json()
+
+#High Level API Functions
+
 def create_playlist (name, description):
     data = {
         'name': name,
@@ -169,14 +251,6 @@ def create_playlist (name, description):
     response = requests.post(BASE_URL + "users/" + uid + "/playlists", json=data, headers=get_header()).json()
 
     return response
-
-def chunk(n, lst):
-    sections = []
-
-    for i in range(0, len(lst), n):
-        sections.append(lst[i:i + n])
-
-    return sections
 
 def shuffle_playlist(playlist_id):
     playlist_json = requests.get(BASE_URL + "playlists/" + playlist_id, headers=get_header()).json()
@@ -195,6 +269,3 @@ def shuffle_playlist(playlist_id):
     for chnk in chunks:
         uris = {'uris':chnk}
         requests.post(BASE_URL + "playlists/" + new_playlist['id'] + "/tracks", json=uris, headers=get_header())
-
-
-

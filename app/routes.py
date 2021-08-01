@@ -1,17 +1,24 @@
 import os
+from random import choices
 from flask.helpers import url_for
 from flask import render_template, flash, request, redirect, send_from_directory
 
 from app import app
-from app.forms import DefGeneratorForm
+from app.forms import DefGeneratorForm, SpotifyCombineForm
 from werkzeug.utils import secure_filename
 from app.functions.defgenerator import *
 from app.functions.spotifyutil import *
+from wtforms import BooleanField
+
+#Home Page
 
 @app.route('/')
 @app.route('/home')
 def home():
     return render_template('home.html', title = 'Home')
+
+
+#Definition Generator
 
 @app.route('/definition_generator', methods=['POST', 'GET'])
 def generatedefinitions():
@@ -35,9 +42,13 @@ def generatedefinitions():
             flash("Field Required")
     return render_template('def_generator.html', title = 'Generate Definitions For List of Terms', form=form)
 
+
+#Spotify Playlist Utilities
+
 @app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
 def spotifyutilitieshome():
     return render_template('/spotify/spotify_home.html', title='Spotify Utilities')
+
 
 @app.route('/spotify-playlist-utilities/login')
 def spotifyutilitieslogin():
@@ -61,13 +72,21 @@ def spotifyutilitiescallback():
 
     return redirect('/spotify-playlist-utilities/' + user['id'])
 
+
 @app.route('/spotify-playlist-utilities/<username>', methods=['POST', 'GET'])
 def spotifyutilities(username):
     if not authenticated_user(username):
         return redirect('/spotify-playlist-utilities')
 
-    playlists = list_of_playlists()
-    return render_template('/spotify/spotify_utilities.html', playlists=playlists, username=username)
+    refresh_library()
+
+    playlists = get_playlists()
+    albums = get_albums()
+
+    public = public_playlists()
+    private = private_playlists()
+
+    return render_template('/spotify/spotify_utilities.html', playlists=playlists, public=public, private=private, albums=albums, username=username)
 
 @app.route('/spotify-playlist-utilities/<username>/<playlist_id>', methods = ['POST', 'GET'])
 def spotifyplaylist(username, playlist_id):
@@ -76,7 +95,9 @@ def spotifyplaylist(username, playlist_id):
     if not valid_playlist(playlist_id):
         return redirect('/spotify-playlist-utilities/' + username)
 
-    return render_template('/spotify/spotify_playlist.html', username=username, playlist_id=playlist_id)
+    playlist = get_playlist(playlist_id)
+
+    return render_template('/spotify/spotify_playlist.html', username=username, playlist=playlist)
 
 @app.route('/spotify-playlist-utilities/<username>/<playlist_id>/shuffle', methods = ['POST', 'GET'])
 def spotifyshuffle(username, playlist_id):
@@ -87,4 +108,36 @@ def spotifyshuffle(username, playlist_id):
 
     shuffle_playlist(playlist_id)
 
+    refresh_library()
+
     return redirect('/spotify-playlist-utilities/' + username + "/" + playlist_id)
+
+@app.route('/spotify-playlist-utilities/<username>/combine', methods=['POST', 'GET'])
+def spotifycombine(username):
+    if not authenticated_user(username):
+        return redirect('/spotify-playlist-utilities')
+
+    playlists = get_playlists()
+    albums = get_albums()
+
+    number_playlists = len(playlists)
+    number_albums = len(albums)
+
+    class SpotifyCombineInstance(SpotifyCombineForm):
+        pass
+
+    for playlist in playlists:
+        setattr(SpotifyCombineInstance, playlist['uri'], BooleanField(playlist['name']))
+
+    for album in albums:
+        setattr(SpotifyCombineInstance, album['uri'], BooleanField(get_album_artists(album['id']) + " - " + album['name']))
+
+
+    form = SpotifyCombineInstance(request.form)
+
+    if request.method == "POST":
+        fields = vars(form)
+
+        print (fields)
+
+    return render_template('/spotify/spotify_combine.html', form=form, playlists=playlists, albums=albums, number_playlists=number_playlists, number_albums=number_albums)

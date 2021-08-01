@@ -3,8 +3,12 @@
 {% block content %}
     <div>
         <div class="inner">
-            <h3>{{ playlist_id }}</h3>
-            <a href="/spotify-playlist-utilities/{{ username }}/{{ playlist_id }}/shuffle">Shuffle</a>
+            {% set name = playlist['name'] %}
+            {% set id = playlist['id'] %}
+
+            <h3>{{ name }}</h3>
+            <input type="button" value="Shuffle" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/shuffle';"/>
+
         </div>
     </div>
 {% endblock %}

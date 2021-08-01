@@ -3,10 +3,62 @@
 {% block content %}
     <div>
         <div class="inner">
-            {% for playlist in playlists %}
-                <a href="/spotify-playlist-utilities/{{ username }}/{{ playlist['id'] }}">{{ playlist['name'] }}</a>
-                <br>
-            {% endfor %}
+            <h1>{{ username }}</h1>
+
+            <div>
+                <input type="button" value="Combine" onclick="location.href='/spotify-playlist-utilities/{{ username }}/combine';"/>
+            </div>
+
+            <div>
+                {% if playlists|length != 0 %}
+                    <div>
+                        {% if public|length != 0 %}
+                            <h3>Public Playlists</h3>
+                            {% for playlist in public %}
+                                <div class="center-vertical">
+                                    {% set id = playlist['id'] %}
+                                    {% set img_url = playlist['images'][0]['url'] %}
+                                    <input type="image" src="{{ img_url }}" alt="Playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
+                                    <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        {% if private|length != 0 %}
+                            <h3>Private Playlists</h3>
+                            {% for playlist in private %}
+                                <div class="center-vertical">
+                                    {% set id = playlist['id'] %}
+                                    {% set img_url = playlist['images'][0]['url'] %}
+                                    <input type="image" src="{{ img_url }}" alt="Playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
+                                    <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <h2>No Playlists</h2>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 2em;">
+                {% if albums|length != 0 %}
+                    <h3>Albums</h3>
+                    {% for album in albums %}
+                        {% set img_url = album['images'][0]['url'] %}
+                        {% set info_link = album['external_urls']['spotify'] %}
+
+                        {% set title = album['name'] %}
+
+                        <input type="image" src="{{ img_url }}" title='{{ title }}' alt="{{ title }}" onclick="location.href='{{ info_link }}';" width=75px height=75px>
+                    {% endfor %}
+
+                {% else %}
+                    <h2>No Saved Albums</h2>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <div class="inner">
+            <h1>Combine Playlists/Albums</h1>
+            <form action="" method="POST" novalidate>
+                {{ form.hidden_tag() }}
+                
+                <div>
+                    <div>
+                        <h3>Playlists</h3>
+                        {% for field in form[0:number_playlists] %}
+                            <div>
+                                {{ field }}
+                                {{ field.label }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <h3>Albums</h3>
+                        {% for field in form[number_playlists: number_playlists+number_albums] %}
+                            <div>
+                                {{ field }}
+                                {{ field.label }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div>
+                    <input id="submit" name="submit" type="submit" value="Combine">
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
