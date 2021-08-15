@@ -97,7 +97,9 @@ def spotifyplaylist(username, playlist_id):
 
     playlist = get_playlist(playlist_id)
 
-    return render_template('/spotify/spotify_playlist.html', username=username, playlist=playlist)
+    datepopularity = date_popularity(playlist_id)
+
+    return render_template('/spotify/spotify_playlist.html', username=username, playlist=playlist, datepopularity=datepopularity)
 
 @app.route('/spotify-playlist-utilities/<username>/<playlist_id>/shuffle', methods = ['POST', 'GET'])
 def spotifyshuffle(username, playlist_id):
@@ -120,9 +122,6 @@ def spotifycombine(username):
     playlists = get_playlists()
     albums = get_albums()
 
-    number_playlists = len(playlists)
-    number_albums = len(albums)
-
     class SpotifyCombineInstance(SpotifyCombineForm):
         pass
 
@@ -132,12 +131,25 @@ def spotifycombine(username):
     for album in albums:
         setattr(SpotifyCombineInstance, album['uri'], BooleanField(get_album_artists(album['id']) + " - " + album['name']))
 
-
     form = SpotifyCombineInstance(request.form)
 
     if request.method == "POST":
-        fields = vars(form)
+        response = request.form
 
-        print (fields)
+        print (response)
 
-    return render_template('/spotify/spotify_combine.html', form=form, playlists=playlists, albums=albums, number_playlists=number_playlists, number_albums=number_albums)
+        items = response.to_dict(False)
+
+        uris = []
+        for item in items:
+            if "spotify" in item:
+                print (item)
+                uris.append(item)
+
+        print (uris)
+
+        combine_items(uris)
+
+        refresh_library()
+
+    return render_template('/spotify/spotify_combine.html', form=form, playlists=playlists, albums=albums)

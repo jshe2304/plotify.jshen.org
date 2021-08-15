@@ -8,25 +8,13 @@
                 {{ form.hidden_tag() }}
                 
                 <div>
-                    <div>
-                        <h3>Playlists</h3>
-                        {% for field in form[0:number_playlists] %}
-                            <div>
-                                {{ field }}
-                                {{ field.label }}
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <div>
-                        <h3>Albums</h3>
-                        {% for field in form[number_playlists: number_playlists+number_albums] %}
-                            <div>
-                                {{ field }}
-                                {{ field.label }}
-                            </div>
-                        {% endfor %}
-                    </div>
+                    {% for field in form if field.widget.input_type != 'hidden'%}
+                        <div>
+                            {{ field }}
+                            {{ field.label }}
+                        </div>
+                    {% endfor %}
+                    
 
                 </div>
 

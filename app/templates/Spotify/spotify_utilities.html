@@ -9,23 +9,27 @@
                 <input type="button" value="Combine" onclick="location.href='/spotify-playlist-utilities/{{ username }}/combine';"/>
             </div>
 
-            <div>
+            <div class="grid-container">
+
                 {% if playlists|length != 0 %}
-                    <div>
-                        {% if public|length != 0 %}
-                            <h3>Public Playlists</h3>
-                            {% for playlist in public %}
-                                <div class="center-vertical">
-                                    {% set id = playlist['id'] %}
-                                    {% set img_url = playlist['images'][0]['url'] %}
-                                    <input type="image" src="{{ img_url }}" alt="Playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
-                                    <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
-                                </div>
-                            {% endfor %}
+                    <div class="public-playlists">
+                        
+                            {% if public|length != 0 %}
+                                <h3>Public Playlists</h3>
+                                {% for playlist in public %}
+                                    <div class="center-vertical">
+                                        {% set id = playlist['id'] %}
+                                        {% if playlist['images']|length != 0 %}
+                                            {% set img_url = playlist['images'][0]['url'] %}
+                                            <input type="image" src="{{ img_url }}" alt="Playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
+                                        {% endif %}
+                                            <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
+                                    </div>
+                                {% endfor %}
                         {% endif %}
                     </div>
 
-                    <div>
+                    <div class="private-playlists">
                         {% if private|length != 0 %}
                             <h3>Private Playlists</h3>
                             {% for playlist in private %}
@@ -38,26 +42,28 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+
                 {% else %}
                     <h2>No Playlists</h2>
                 {% endif %}
-            </div>
 
-            <div style="margin-top: 2em;">
-                {% if albums|length != 0 %}
-                    <h3>Albums</h3>
-                    {% for album in albums %}
-                        {% set img_url = album['images'][0]['url'] %}
-                        {% set info_link = album['external_urls']['spotify'] %}
+                <div class="albums">
+                    {% if albums|length != 0 %}
+                        <h3>Albums</h3>
+                        {% for album in albums %}
+                            {% set img_url = album['images'][0]['url'] %}
+                            {% set info_link = album['external_urls']['spotify'] %}
 
-                        {% set title = album['name'] %}
+                            {% set title = album['name'] %}
 
-                        <input type="image" src="{{ img_url }}" title='{{ title }}' alt="{{ title }}" onclick="location.href='{{ info_link }}';" width=75px height=75px>
-                    {% endfor %}
+                            <input type="image" src="{{ img_url }}" title='{{ title }}' alt="{{ title }}" onclick="location.href='{{ info_link }}';" width=75px height=75px>
+                        {% endfor %}
 
-                {% else %}
-                    <h2>No Saved Albums</h2>
-                {% endif %}
+                    {% else %}
+                        <h2>No Saved Albums</h2>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
     </div>

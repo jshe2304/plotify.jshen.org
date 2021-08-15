@@ -17,9 +17,7 @@ div.center-vertical {
     display:flex;
     align-items:center;
     width:50%;
-    font-size:1em;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-top:0.5rem;
 }
 
 div.navbar {
@@ -182,4 +180,25 @@ ul.navbar {
 
 li.navbar {
     display: inline;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+      'left right'
+      'footer footer';
+    grid-gap: 2em;
+    padding: 1em;
+}
+
+.public-playlists {
+    grid-area: left;
+}
+
+.private-playlists {
+    grid-area: right;
+}
+
+.albums {
+    grid-area: footer;
 }

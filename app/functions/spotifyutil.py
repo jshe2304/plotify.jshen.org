@@ -3,6 +3,13 @@ import requests
 from urllib.parse import urlencode, quote
 import random
 
+#import numpy as np
+#import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from io import StringIO, BytesIO
+import base64
+
 from requests.api import get, head
 
 from app import app
@@ -140,18 +147,73 @@ def chunk(n, lst):
 
     return sections
 
+#Analytics Functions
+
+def date_popularity(playlist_id):
+    release = []
+    popularities = []
+
+    tracks = playlist_track_objects(playlist_id)
+
+    for track in tracks:
+
+        track = track['track']
+
+        release_str = track['album']['release_date'].split("-")
+
+        release_num = None
+
+        if len(release_str) == 0:
+            continue
+        elif len(release_str) == 1:
+            release_num = int(release_str[0])
+        elif len(release_str) == 2:
+            days = int(release_str[1]) * 30.25
+            release_num = int(release_str[0]) + days/365
+        elif len(release_str) == 3:
+            days = int(release_str[1]) * 30.25 + int(release_str[2])
+            release_num = int(release_str[0]) + days/365
+
+
+        popularity = track['popularity'] - 50
+
+        release.append(release_num)
+        popularities.append(popularity)
+
+    img = BytesIO()
+
+    sns.scatterplot(x=release, y=popularities)
+    plt.savefig("test.png")
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+
+    b64 = base64.b64encode(img.getvalue())
+
+    return b64
+    
+    
+
 #Low Level API Functions
 
-def list_of_tracks(playlist_id):
+def playlist_track_objects(playlist_id):
+    if playlist_id == "" or len(playlist_id) != 22:
+        return []
+
+    paging_object = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=get_header()).json()
+    
+    playlist = unpage(paging_object)
+
+    return playlist
+
+def playlist_tracks(playlist_id):
     #Test playlist: 6Sko93pvXQ4ByuEJXHAcKT
     #Track Info: track_json['track']
     #Track Name: track_json['track']['name']
     #Track id: track_json['track']['id']
 
-    songs = []
-
     if playlist_id == "" or len(playlist_id) != 22:
-        return songs
+        return []
 
     paging_object = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=get_header()).json()
     
@@ -161,6 +223,25 @@ def list_of_tracks(playlist_id):
 
     for track in playlist:
         uris.append(track['track']['uri'])
+
+    return uris
+
+def album_tracks(album_id):
+    params = {
+        'limit': 50
+    }
+
+    paging_object = requests.get(BASE_URL + "albums/" + album_id + "/tracks", headers=get_header(), params=params).json()
+
+    tracks = paging_object['items']
+
+    if len(tracks) > 50:
+        tracks = unpage(paging_object)
+
+    uris = []
+
+    for track in tracks:
+        uris.append(track['uri'])
 
     return uris
 
@@ -236,6 +317,13 @@ def get_album_artists(album_id):
 def get_playlist(playlist_id):
     return requests.get(BASE_URL + "playlists/" + playlist_id, headers=get_header()).json()
 
+def add_to_playlist(tracks, playlist_id):
+    chunks = chunk(50, tracks)
+
+    for chnk in chunks:
+        uris = {'uris':chnk}
+        requests.post(BASE_URL + "playlists/" + playlist_id + "/tracks", json=uris, headers=get_header())
+
 #High Level API Functions
 
 def create_playlist (name, description):
@@ -258,14 +346,31 @@ def shuffle_playlist(playlist_id):
     playlist_name = playlist_json['name']
     playlist_description = playlist_json['description']
 
-    tracks = list_of_tracks(playlist_id)
+    tracks = playlist_tracks(playlist_id)
 
-    new_playlist = create_playlist("Shuffled - " + playlist_name, playlist_description)
+    new_playlist = create_playlist("Shuffled - " + playlist_name, playlist_description)['id']
 
     random.shuffle(tracks)
 
-    chunks = chunk(50, tracks)
+    add_to_playlist(tracks, new_playlist)
 
-    for chnk in chunks:
-        uris = {'uris':chnk}
-        requests.post(BASE_URL + "playlists/" + new_playlist['id'] + "/tracks", json=uris, headers=get_header())
+def combine_items(uris):
+    #for each item, get tracks, add to playlist
+
+    tracks = []
+
+    print (" ")
+
+    print (uris)
+
+    for uri in uris:
+        
+        uri_parts = str(uri).split(':')
+        if "playlist" in uri_parts:
+            tracks += playlist_tracks(uri_parts[-1])
+        elif "album" in uri_parts:
+            tracks += album_tracks(uri_parts[-1])
+    
+    new_playlist = create_playlist("Combined - " + str(len(uris)) + " items", None)['id']
+
+    add_to_playlist(tracks, new_playlist)
