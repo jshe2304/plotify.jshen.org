@@ -3,10 +3,10 @@
 {% block content %}
     <div>
         <div class="inner">
-            <h1>{{ username }}</h1>
+            <h2>{{ username }}</h2>
 
             <div>
-                <input type="button" value="Combine" onclick="location.href='/spotify-playlist-utilities/{{ username }}/combine';"/>
+                <input type="button" value="combine items" onclick="location.href='/spotify-playlist-utilities/{{ username }}/combine';"/>
             </div>
 
             <div class="grid-container">
@@ -15,13 +15,13 @@
                     <div class="public-playlists">
                         
                             {% if public|length != 0 %}
-                                <h3>Public Playlists</h3>
+                                <h3>public playlists</h3>
                                 {% for playlist in public %}
                                     <div class="center-vertical">
                                         {% set id = playlist['id'] %}
                                         {% if playlist['images']|length != 0 %}
                                             {% set img_url = playlist['images'][0]['url'] %}
-                                            <input type="image" src="{{ img_url }}" alt="Playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
+                                            <input type="image" src="{{ img_url }}" alt="Playlist" class="library-playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
                                         {% endif %}
                                             <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
                                     </div>
@@ -31,12 +31,12 @@
 
                     <div class="private-playlists">
                         {% if private|length != 0 %}
-                            <h3>Private Playlists</h3>
+                            <h3>private playlists</h3>
                             {% for playlist in private %}
                                 <div class="center-vertical">
                                     {% set id = playlist['id'] %}
                                     {% set img_url = playlist['images'][0]['url'] %}
-                                    <input type="image" src="{{ img_url }}" alt="Playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
+                                    <input type="image" src="{{ img_url }}" alt="Playlist" class="library-playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
                                     <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
                                 </div>
                             {% endfor %}
@@ -49,7 +49,7 @@
 
                 <div class="albums">
                     {% if albums|length != 0 %}
-                        <h3>Albums</h3>
+                        <h3>albums</h3>
                         {% for album in albums %}
                             {% set img_url = album['images'][0]['url'] %}
                             {% set info_link = album['external_urls']['spotify'] %}

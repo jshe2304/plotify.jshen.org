@@ -19,8 +19,14 @@ def dictionary_request(term):
     if "title" in json:
         definition = ""
     else:
-        partofspeech = json[0]['meanings'][0]['partOfSpeech']
-        definition = "(" + partofspeech + ") " + json[0]['meanings'][0]['definitions'][0]['definition']
+        try:
+            partofspeech = json[0]['meanings'][0]['partOfSpeech']
+            definition = "(" + partofspeech + ") " + json[0]['meanings'][0]['definitions'][0]['definition']
+        except:
+            try:
+                definition = json[0]['meanings'][0]['definitions'][0]['definition']
+            except:
+                definition = ""
 
     return definition
 
@@ -28,6 +34,8 @@ def wikipedia_request(term):
     definition = None
 
     baseurl = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exsentences=2&explaintext&redirects=1&titles="
+
+    print (baseurl + quote(term))
 
     json = requests.get(baseurl + quote(term)).json()
     json = json['query']['pages']
@@ -79,7 +87,7 @@ def filecontent(filename):
         for paragraph in doc.paragraphs:
             content += paragraph.text + "\n"
 
-    return content
+    return content.lower()
 
 def format_dictionary(dictionary):
     formatted = []
@@ -87,7 +95,13 @@ def format_dictionary(dictionary):
     for term in dictionary:
         section = term + "\n" + dictionary[term]
         formatted.append(section)
-    return "\n-\n".join(formatted)
+    
+    unicode_string = "\n-\n".join(formatted)
+
+    string_encode = unicode_string.encode("ascii", "ignore")
+    string_decode = string_encode.decode()
+
+    return string_decode
 
 def save_file(formatted):
     pdf = FPDF(unit = "in", format = "letter")

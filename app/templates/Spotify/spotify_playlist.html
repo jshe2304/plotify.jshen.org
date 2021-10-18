@@ -2,14 +2,48 @@
 
 {% block content %}
     <div>
-        <div class="inner">
-            {% set name = playlist['name'] %}
-            {% set id = playlist['id'] %}
-
-            <h3>{{ name }}</h3>
-            <input type="button" value="Shuffle" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/shuffle';"/>
-            <img src="data:image/png;base64, {{ datepopularity }}" width=100px/>
-
+        <h3>{{ playlist_name }}</h3>
+        
+        <div>
+            <input type="button" value="Playlist Utilities" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/utilities';"/>
         </div>
+        
+        {% for plot in plots %}
+            <div>
+
+                <div class="plot">
+                    <div>
+                        <div class="plot">
+                            <h3>{{ plot['title'] }}</h3>
+                            
+                        </div>
+                        
+
+
+                        <img src="data:image/png;base64,{{ plot['plot'] }}" alt='plot'/>
+                    </div>
+                    
+                    <div class="center-vertical">
+                        <div>
+                            {% for figure in plot['figures'] %}
+                                <div>
+                                    <h4>{{ figure }}</h4>
+                                    {{ plot['figures'][figure] }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+                
+                {% if plot['description'] != '' %}
+                    <div>
+                        {{ plot['description'] }}
+                    </div>
+                {% endif %}
+                
+            </div>
+        {% endfor %}
+
     </div>
 {% endblock %}

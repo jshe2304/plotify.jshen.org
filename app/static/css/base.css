@@ -1,0 +1,56 @@
+html, body {
+    padding: 0;
+    margin: 0;
+
+    background-color: rgb(231, 226, 213);
+
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 0.875em;
+
+    scroll-behavior: smooth;
+
+    position: relative;
+    min-height: 100vh;
+}
+
+div.html-wrapper {
+    margin: auto;
+    margin-top: 5em;
+    margin-bottom: 2em;
+
+    width: 50%;
+    min-width: 25em;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a.header {
+    background-color: white;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: rgb(231, 226, 213);
+
+    border: solid;
+    border-color:rgb(200, 200, 200);
+    border-width: 0.1em;
+
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+input[type=button]:hover {
+    background-color: white;
+}
+
+input[type=submit]:hover {
+    background-color: white;
+}
+
+input[type=reset]:hover {
+    background-color: white;
+}

@@ -1,0 +1,8 @@
+div.center-vertical {
+    display : flex;
+    align-items: center;
+}
+
+div.inset {
+    margin-left: 2em;
+}

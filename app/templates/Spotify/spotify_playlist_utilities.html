@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <input type="button" value="Shuffle" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/shuffle';"/>
+    </div>
+
+    <div>
+        <input type="button" value="Reorganize - Date" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/reorganize/date';"/>
+    </div>
+
+    <div>
+        <input type="button" value="Reorganize - Reversed Date" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/reorganize/rdate';"/>
+    </div>
+{% endblock %}

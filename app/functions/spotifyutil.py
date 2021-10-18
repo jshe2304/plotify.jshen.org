@@ -3,7 +3,7 @@ import requests
 from urllib.parse import urlencode, quote
 import random
 
-#import numpy as np
+import numpy as np
 #import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -13,6 +13,8 @@ import base64
 from requests.api import get, head
 
 from app import app
+
+
 
 """
 Objectives:
@@ -28,6 +30,9 @@ Reorganize
     Popularity
 
 Filter By Characteristics
+
+RYM ratings
+Music Map
 
 
 """
@@ -121,7 +126,7 @@ def get_uid():
 
 #Useful JSON Functions
 
-def unpage (json):
+def unpage (json, params):
     if 'items' not in json and 'next' not in json:
         return None
     
@@ -133,7 +138,7 @@ def unpage (json):
     next = json['next']
 
     while next != None:
-        next_json = requests.get(next, headers=get_header()).json()
+        next_json = requests.get(next, params=params, headers=get_header()).json()
         items += next_json['items']
         next = next_json['next']
 
@@ -147,86 +152,40 @@ def chunk(n, lst):
 
     return sections
 
-#Analytics Functions
-
-def date_popularity(playlist_id):
-    release = []
-    popularities = []
-
-    tracks = playlist_track_objects(playlist_id)
-
-    for track in tracks:
-
-        track = track['track']
-
-        release_str = track['album']['release_date'].split("-")
-
-        release_num = None
-
-        if len(release_str) == 0:
-            continue
-        elif len(release_str) == 1:
-            release_num = int(release_str[0])
-        elif len(release_str) == 2:
-            days = int(release_str[1]) * 30.25
-            release_num = int(release_str[0]) + days/365
-        elif len(release_str) == 3:
-            days = int(release_str[1]) * 30.25 + int(release_str[2])
-            release_num = int(release_str[0]) + days/365
-
-
-        popularity = track['popularity'] - 50
-
-        release.append(release_num)
-        popularities.append(popularity)
-
-    img = BytesIO()
-
-    sns.scatterplot(x=release, y=popularities)
-    plt.savefig("test.png")
-    plt.savefig(img, format='png')
-    plt.close()
-    img.seek(0)
-
-    b64 = base64.b64encode(img.getvalue())
-
-    return b64
-    
-    
 
 #Low Level API Functions
 
-def playlist_track_objects(playlist_id):
-    if playlist_id == "" or len(playlist_id) != 22:
-        return []
+def playlist_tracks(playlist_id):
 
-    paging_object = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=get_header()).json()
-    
-    playlist = unpage(paging_object)
+    params = {
+        'fields': 'href, items(added_at, track(album.artists(name, uri), album.name, album.release_date, album.total_tracks, album.uri, duration_ms, name, popularity, track_number, uri)), limit, next, offset, previous, total'
+    }
+
+    paging_object = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", params=params, headers=get_header()).json()
+
+    playlist = unpage(paging_object, params)
 
     return playlist
 
-def playlist_tracks(playlist_id):
-    #Test playlist: 6Sko93pvXQ4ByuEJXHAcKT
-    #Track Info: track_json['track']
-    #Track Name: track_json['track']['name']
-    #Track id: track_json['track']['id']
-
-    if playlist_id == "" or len(playlist_id) != 22:
-        return []
-
-    paging_object = requests.get(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=get_header()).json()
-    
-    playlist = unpage(paging_object)
+def tracks_uris (tracks):
 
     uris = []
 
-    for track in playlist:
+    for track in tracks:
         uris.append(track['track']['uri'])
 
     return uris
 
-def album_tracks(album_id):
+def tracks_ids (tracks):
+
+    ids = []
+
+    for track in tracks:
+        ids.append(track['track']['uri'].split(":")[-1])
+
+    return ids
+
+def album_uris(album_id):
     params = {
         'limit': 50
     }
@@ -236,7 +195,7 @@ def album_tracks(album_id):
     tracks = paging_object['items']
 
     if len(tracks) > 50:
-        tracks = unpage(paging_object)
+        tracks = unpage(paging_object, None)
 
     uris = []
 
@@ -244,6 +203,18 @@ def album_tracks(album_id):
         uris.append(track['uri'])
 
     return uris
+
+def add_to_playlist(tracks, playlist_id):
+    chunks = chunk(50, tracks)
+
+    for chnk in chunks:
+        uris = {'uris':chnk}
+        requests.post(BASE_URL + "playlists/" + playlist_id + "/tracks", json=uris, headers=get_header())
+
+def playlist_name (playlist_id):
+    return requests.get(BASE_URL + "playlists/" + playlist_id, params={'fields': 'name'}, headers=get_header()).json()['name']
+
+#User Library Functions
 
 def get_albums():
     return albums
@@ -256,7 +227,7 @@ def request_albums():
 
     #Album objects wrapped in SavedAlbum wrapper object
     #savedalbumobject['album']
-    saved_albums = unpage(paging_object)
+    saved_albums = unpage(paging_object, None)
 
     albums = []
 
@@ -269,9 +240,9 @@ def request_playlists():
     #Playlist Name: list_json['name']
     #Playlist ID: list_json['id']
 
-    paging_object = requests.get(BASE_URL + "me/playlists?limit=50", headers=get_header()).json()
+    paging_object = requests.get(BASE_URL + "me/playlists?limit=50",  headers=get_header()).json()
 
-    playlists = unpage(paging_object)
+    playlists = unpage(paging_object, None)
 
     return playlists
 
@@ -301,29 +272,6 @@ def private_playlists():
 
     return private
 
-def get_album(album_id):
-    return requests.get(BASE_URL + "albums/" + album_id, headers=get_header()).json()
-
-def get_album_artists(album_id):
-    album = get_album(album_id)
-
-    artists = []
-
-    for artist in album['artists']:
-        artists.append(artist['name'])
-
-    return ", ".join(artists)
-
-def get_playlist(playlist_id):
-    return requests.get(BASE_URL + "playlists/" + playlist_id, headers=get_header()).json()
-
-def add_to_playlist(tracks, playlist_id):
-    chunks = chunk(50, tracks)
-
-    for chnk in chunks:
-        uris = {'uris':chnk}
-        requests.post(BASE_URL + "playlists/" + playlist_id + "/tracks", json=uris, headers=get_header())
-
 #High Level API Functions
 
 def create_playlist (name, description):
@@ -334,13 +282,40 @@ def create_playlist (name, description):
 
     uid = current_user()['id']
 
-    print (uid)
-
     response = requests.post(BASE_URL + "users/" + uid + "/playlists", json=data, headers=get_header()).json()
 
     return response
 
 def shuffle_playlist(playlist_id):
+    playlist = playlist_tracks(playlist_id)
+
+    uris = tracks_uris(playlist)
+
+    random.shuffle(uris)
+
+    add_to_playlist(uris, create_playlist("Shuffled", None)['id'])
+
+def combine_items(uris):
+
+    tracks = []
+
+    for uri in uris:
+        uri_parts = str(uri).split(':')
+        id = uri_parts[-1]
+        if "playlist" in uri_parts:
+            print (id)
+            tracks += tracks_uris(playlist_tracks(id))
+        elif "album" in uri_parts:
+            print (id)
+            tracks += album_uris(id)
+
+    print (tracks)
+
+    new_playlist = create_playlist("Combined - " + str(len(uris)) + " items", None)['id']
+
+    add_to_playlist(tracks, new_playlist)
+
+def reorganize_playlist(playlist_id, characteristic):
     playlist_json = requests.get(BASE_URL + "playlists/" + playlist_id, headers=get_header()).json()
 
     playlist_name = playlist_json['name']
@@ -348,29 +323,189 @@ def shuffle_playlist(playlist_id):
 
     tracks = playlist_tracks(playlist_id)
 
-    new_playlist = create_playlist("Shuffled - " + playlist_name, playlist_description)['id']
+    if characteristic == 'date':
+        tracks.sort(key=release_date)
+    elif characteristic == 'rdate':
+        tracks.sort(reverse=True, key=release_date)
 
-    random.shuffle(tracks)
-
-    add_to_playlist(tracks, new_playlist)
-
-def combine_items(uris):
-    #for each item, get tracks, add to playlist
-
-    tracks = []
-
-    print (" ")
-
-    print (uris)
-
-    for uri in uris:
-        
-        uri_parts = str(uri).split(':')
-        if "playlist" in uri_parts:
-            tracks += playlist_tracks(uri_parts[-1])
-        elif "album" in uri_parts:
-            tracks += album_tracks(uri_parts[-1])
+    add_to_playlist(playlist_tracks(tracks), create_playlist("Reorganized - " + playlist_name, playlist_description)['id'])
     
-    new_playlist = create_playlist("Combined - " + str(len(uris)) + " items", None)['id']
+def sort_playlist(playlist_id, characteristics):
+    None
 
-    add_to_playlist(tracks, new_playlist)
+#Playlist Basic Info
+#Size
+
+def playlist_size(playlist):
+    #Takes playlist object, such as from get_playlist()
+    return playlist['tracks']['items']['total']
+
+#Analytics Functions
+
+def popularity(track):
+    return track['popularity']
+
+def release_date(track):
+    #Decimal Format
+
+    track = track['track']
+
+    release_str = track['album']['release_date'].split("-")
+
+    release_num = None
+
+    if len(release_str) == 0:
+        return release_num
+    elif len(release_str) == 1:
+        release_num = int(release_str[0])
+    elif len(release_str) == 2:
+        days = int(release_str[1]) * 30.25
+        release_num = int(release_str[0]) + days/365
+    elif len(release_str) == 3:
+        days = int(release_str[1]) * 30.25 + int(release_str[2])
+        release_num = int(release_str[0]) + days/365
+    
+    return release_num
+
+def genre(track):
+    artist = requests.get(track['track']['artists'][0]['href'], headers=get_header()).json()
+    
+    if len(artist['genres']) != 0:
+        return artist['genres'][0]
+    else:
+        return 'Unknown'
+
+def common_genre(playlist):
+    #Takes playlist object, return 5 most common genres
+
+    None
+
+def tracks_data (tracks):
+    data = {
+        'release dates': [],
+        'popularities': []
+    }
+
+    for track in tracks:
+        data['release dates'].append(release_date(track))
+        data['popularities'].append(track['track']['popularity'])
+
+    return data
+
+
+def audio_features(tracks, target_field):
+    ids = tracks_ids(tracks)
+
+    chunks = chunk(100, ids)
+
+    all_features = []
+
+    for chnk in chunks:
+        params = {
+            'ids': ','.join(chnk)
+        }
+
+        chunk_features = requests.get(BASE_URL + 'audio-features', params=params, headers=get_header()).json()['audio_features']
+
+        if target_field != None:
+            all_features += [d[target_field] for d in chunk_features]
+
+    return all_features
+
+#Analytics
+
+def dates_analysis(dates):
+    #Density Plot, Mean, Median, Standard Deviation, 
+
+    img = BytesIO()
+    sns.set_style('dark')
+    fig, ax1 = plt.subplots()
+    ax1 = sns.kdeplot(x=dates, bw_adjust=.25, fill=True)
+    ax1.set(ylabel=None)
+    ax1.set(yticks=[])
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+    plot_b64 = base64.b64encode(img.getvalue()).decode('utf-8') #Base64 bytes to string
+
+    dates = np.array(dates)
+
+    mean = round(np.mean(dates))
+    median = round(np.median(dates))
+    stdev = round(np.std(dates), 2)
+
+    #b64 is bytes so we convert to string
+
+    return {'title': 'release date distribution', 'description': '', 'plot': plot_b64, 'figures': {'mean year': mean, 'median year': median, 'standard deviation': stdev}}
+
+def valence_analysis(valences):
+
+    description = 'valence essentially means happiness/sadness of a song'
+
+    img = BytesIO()
+    sns.set_style('dark')
+    fig, ax1 = plt.subplots()
+    ax1 = sns.kdeplot(x=valences, bw_adjust=.25, fill=True)
+    ax1.set(ylabel=None)
+    ax1.set(yticks=[])
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+    plot_b64 = base64.b64encode(img.getvalue()).decode('utf-8') #Base64 bytes to string
+
+    valences = np.array(valences)
+
+    mean = round(np.mean(valences), 3)
+    median = round(np.median(valences), 3)
+    stdev = round(np.std(valences), 3)
+
+    #b64 is bytes so we convert to string
+
+    return {'title': 'valence distribution', 'description': description, 'plot': plot_b64, 'figures': {'mean valence': mean, 'median valence': median, 'standard deviation': stdev}}
+
+def date_valence_analysis(dates, valences):
+
+    description = 'this plot is rather trivial, as, despite certain sterotypes, there will likely not be any relation between decades and the valence of their music. if you see such a relationship, congrats!'
+
+    img = BytesIO()
+    sns.set_style('dark')
+    fig, ax1 = plt.subplots()
+    ax1 = sns.scatterplot(x=dates, y=valences)
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+    plot_b64 = base64.b64encode(img.getvalue()).decode('utf-8') #Base64 bytes to string
+
+    #b64 is bytes so we convert to string
+
+    #dates = np.array(dates)
+    #valences = np.array(valences)
+
+    return {'title': 'release date versus valence', 'description': description, 'plot': plot_b64, 'figures': {}}
+
+def popularity_analysis(popularities):
+
+    img = BytesIO()
+    sns.set_style('dark')
+    fig, ax1 = plt.subplots()
+    ax1 = sns.kdeplot(x=popularities, bw_adjust=.25, fill=True)
+    ax1.set(ylabel=None)
+    ax1.set(yticks=[])
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+    plot_b64 = base64.b64encode(img.getvalue()).decode('utf-8') #Base64 bytes to string
+
+    valences = np.array(popularities)
+
+    mean = round(np.mean(popularities))
+    median = round(np.median(popularities))
+    stdev = round(np.std(popularities))
+
+    #b64 is bytes so we convert to string
+
+    return {'title': 'popularity distribution', 'description': '', 'plot': plot_b64, 'figures': {'mean popularity': mean, 'median popularity': median, 'standard deviation': stdev}}
+
+def top_songs ():
+    for track in unpage(requests.get('https://api.spotify.com/v1/me/top/tracks', params={'time_range': 'long_term'}, headers=get_header()).json(), None):
+        print (track['name'])

@@ -2,94 +2,83 @@
 
 {% block content %}
 	<div>
-		<div class="inner" id="form">
-			<h1>Definition Generator (Quizlet Compatible)</h1>
-			<form action="" method="POST" enctype="multipart/form-data" novalidate>
-				{{ form.hidden_tag() }}
+		<div id="form">
+			<h3>Definition Generator (Quizlet Compatible)</h3>
+			
+			
 
-				<div id="file" class="section">
-					<h3>
-						{{ form.file.label }} (DOCX, PDF, TXT)
+			<div class="inset">
+				<a onClick="document.getElementById('help').scrollIntoView();">
+					<span style="color: rgb(110, 110, 255);">Guide and FAQ</span>
+				</a>
+				
+				<form action="" method="POST" enctype="multipart/form-data" novalidate>
+					{{ form.hidden_tag() }}
 
-						<span class="tooltip">
-							?
-							<span class="tooltiptext">File with terms to be defined. Must not exceed 20mb for security and performance reasons. Large files may be broken down into smaller files then submitted.</span>
-						</span>
-					</h3>
-					<div class="standout">
-						{{ form.file(class_="formbutton") }}
-					</div>
-				</div>		
+					<div id="file" class="section">
+						<h3>
+							{{ form.file.label }} (DOCX, PDF, TXT)
+						</h3>
+						<div class="standout inset">
+							{{ form.file(class_="link-button") }}
+						</div>
+					</div>		
 
-				<div id="def_source" class="section">
-					<h3>
-						{{ form.def_source.label }}
-						<span class="tooltip">
-							?
-							<span class="tooltiptext">Where the definition will be found. Select Dictionary for vocabulary terms and Wikipedia for most other cases such as history, science, etc. If the chosen source does not recognize the term, the other source will be used. If neither source recognizes it, the definition will be left blank.</span>
-						</span>
-					</h3>
-					<div class="standout">
-						{% for subfield in form.def_source %}
-							<tr>
-								<td>{{ subfield }}</td>
-								<td>{{ subfield.label }}</td>
-								<br>
-							</tr>
-						{% endfor %}
-					</div>
-				</div>
-
-				<div id="omit_term" class="section">
-					<h3>
-						{{ form.omit_term.label }}
-						<span class="tooltip">
-							?
-							<span class="tooltiptext">Select if you do not want to see the term when studying. For example, when you are looking at the definition to guess the term.</span>
-						</span>
-					</h3>
-					<div class="standout">
-						{{ form.omit_term }} Omit
-					</div>
-				</div>
-
-				<div id="separator" class="section">
-					<h3>
-						{{ form.separator.label }}
-						<span class="tooltip">
-							?
-							<span class="tooltiptext">What character separates the terms in your list? Inconsistent separating characters may lead to issues with the final definitions.</span>
-						</span>
-					</h3>
-					<div class="standout">
-						{% for subfield in form.separator %}
-							<tr>
-								<td>{{ subfield }}</td>
-								<td>{{ subfield.label }}</td>
-								<br>
-							</tr>
-						{% endfor %}
-					</div>
-				</div>
-
-				<div id="flash" class = "section" style="background-color: red;">
-					{% with messages = get_flashed_messages() %}
-						{% if messages %}
-							{% for message in messages %}
-								<span style="margin: 1em;">{{ message }}</span>
+					<div id="def_source" class="section">
+						<h3>
+							{{ form.def_source.label }}
+						</h3>
+						<div class="standout inset">
+							{% for subfield in form.def_source %}
+								<tr>
+									<td>{{ subfield }}</td>
+									<td>{{ subfield.label }}</td>
+									<br>
+								</tr>
 							{% endfor %}
-						{% endif %}
-					{% endwith %}
-				</div>
+						</div>
+					</div>
 
-				<div id="submit" class="section" style="margin-top: 2em; margin-bottom: 2em;">
-					{{ form.submit(class_="button formsubmitbutton") }}
-				</div>
-			</form>
+					<div id="omit_term" class="section">
+						<h3>
+							{{ form.omit_term.label }}
+						</h3>
+						<div class="standout inset">
+							{{ form.omit_term }} Omit
+						</div>
+					</div>
 
-			<a onClick="document.getElementById('help').scrollIntoView();">
-				<span style="color: rgb(110, 110, 255);">Questions? Need Help?</span>
-			</a>
+					<div id="separator" class="section">
+						<h3>
+							{{ form.separator.label }}
+						</h3>
+						<div class="standout inset">
+							{% for subfield in form.separator %}
+								<tr>
+									<td>{{ subfield }}</td>
+									<td>{{ subfield.label }}</td>
+									<br>
+								</tr>
+							{% endfor %}
+						</div>
+					</div>
+
+					<div id="flash" class = "section" style="background-color: red;">
+						{% with messages = get_flashed_messages() %}
+							{% if messages %}
+								{% for message in messages %}
+									<span style="margin: 1em;">{{ message }}</span>
+								{% endfor %}
+							{% endif %}
+						{% endwith %}
+					</div>
+
+					<div id="submit" class="section" style="margin-top: 2em; margin-bottom: 2em;">
+						{{ form.submit(class_="link-button") }}
+					</div>
+				</form>
+
+			</div>
 
 		</div>
 

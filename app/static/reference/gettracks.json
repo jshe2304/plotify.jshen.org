@@ -1,0 +1,43 @@
+{
+    "href": "https://api.spotify.com/v1/users/spotify_espa%C3%B1a/playlists/21THa8j9TaSGuXYNBU5tsC/tracks",
+    "items": [
+        {
+            "added_at": "2016-10-11T13:44:40Z",
+            "track": {
+                "album": {
+                    "artists": [
+                        {
+                            "name": "Zion & Lennox",
+                            "uri": "spotify:artist:21451j1KhjAiaYKflxBjr1"
+                        }
+                    ],
+                    "name": "Otra Vez (feat. J Balvin)",
+                    "uri": "spotify:album:5GjKG3Y8OvSVJO55dQTFyD"
+                },
+                "duration_ms": 209453,
+                "name": "Otra Vez (feat. J Balvin)",
+                "popularity": 85,
+                "track_number": 1,
+                "uri": "spotify:track:7pk3EpFtmsOdj8iUhjmeCM"
+            }
+        },
+        {
+            "added_at": "2016-10-11T13:44:40Z",
+            "added_by": {
+                "external_urls": {
+                    "spotify": "http://open.spotify.com/user/spotify_espa%C3%B1a"
+                },
+                "href": "https://api.spotify.com/v1/users/spotify_espa%C3%B1a",
+                "id": "spotify_españa",
+                "type": "user",
+                "uri": "spotify:user:spotify_espa%C3%B1a"
+            },
+            "is_local": false
+        }
+    ],
+    "limit": 100,
+    "next": null,
+    "offset": 0,
+    "previous": null,
+    "total": 58
+}

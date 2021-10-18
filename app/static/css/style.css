@@ -2,10 +2,9 @@ html, body {
     padding: 0;
     margin: 0;
 
-    background-color: rgb(60, 60, 60);
+    background-color: #e7e2d5;
 
     font-family: Calibri;
-    color: white;
 
     scroll-behavior: smooth;
 
@@ -21,7 +20,6 @@ div.center-vertical {
 }
 
 div.navbar {
-    background-color : rgb(60, 69, 89);
     
     padding: 1em;
     padding-left: 2em;
@@ -83,7 +81,7 @@ input[type=button], input[type=submit], input[type=file].button {
 }
 
 input[type=button], input[type=submit], input[type=file].button :hover {
-    background-color: rgb(88, 107, 124);
+    background-color:white;
 }
 
 details {
@@ -100,7 +98,6 @@ details {
 }
 
 footer {
-    background-color : rgb(60, 69, 89);
 
     padding: 1rem;
     padding-left: 3rem;
@@ -120,7 +117,6 @@ footer {
 
 a {
     text-decoration: none;
-    color: white;
 }
 
 .tooltip {
@@ -186,7 +182,8 @@ li.navbar {
     display: grid;
     grid-template-areas:
       'left right'
-      'footer footer';
+      'footer footer'
+    ;
     grid-gap: 2em;
     padding: 1em;
 }

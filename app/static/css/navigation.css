@@ -1,0 +1,47 @@
+div.nav {
+    display: flex;
+    align-items: center;
+}
+
+div.nav-border {
+    border-style: solid;
+
+    border-color:rgb(200, 200, 200);
+    border-width: 0.1em;
+}
+
+div.nav-link {
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+div.nav-link-border {
+    border-right-style: solid;
+
+    border-color:rgb(200, 200, 200);
+    border-width: 0.1em;
+}
+
+div.nav-link:hover {
+    background-color: white;
+}
+
+header {
+    margin-bottom: 3em;
+}
+
+div.header-logo {
+    margin-bottom: 1em;
+    font-size: 2em;
+}
+
+a.logo {
+    color:rgb(180, 162, 150);
+    font-weight: bold;
+    font-stretch: ultra-expanded;
+}
+
+footer {
+    margin-top: 5em;
+}

@@ -1,36 +1,80 @@
 <html>
     <head>
-        <link rel = "stylesheet" href = "{{ url_for('static', filename='style.css') }}">
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='css/base.css') }}">
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='css/basic.css') }}">
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='css/navigation.css') }}">
 
-        {% if title %}
-            <title>{{ title }} - jshen</title>
-        {% else %}
-            <title>Welcome To My Site! - jshen</title>
-        {% endif %}
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='css/def_generator.css') }}">
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='css/spotify.css') }}">
 
         <link rel="shortcut icon" href="/static/favicon.png"/>
 
     </head>
     
     <body>
-        
-        <div class = "navbar">
-            <ul class="navbar">
-                <li class="navbar" style="margin-right: 2em;"><h1 style="display: inline;" onclick="location.href='/home';">jshen.org</h1></li>
-                <li class="navbar"><input type="button" class="button navbarbutton" onclick="location.href='/home';" value="Home" /></li>
-                <!--<li class="navbar" style="margin-left:1em; margin-right: 1em;"><h3 style="display:inline;">Utilities</h3></li>-->
-                <li class="navbar"><input type="button" class="button navbarbutton" onclick="location.href='/definition_generator';" value="Definitions Generator"/></li>
-                <li class="navbar"><input type="button" class="button navbarbutton" onclick="location.href='/spotify-playlist-utilities';" value="Spotify PlayList Utilities"/></li>
-            </ul>
-        </div>
 
-        <div class = "content">
-            {% block content %}{% endblock %}
+        <div class='html-wrapper'>
+            <div>
+                <header>
+                    
+                    <div class="header-logo">
+                        <a href="/" class="logo">
+                            j s h e (<i>n</i>)
+                        </a>
+                    </div>
+
+                    <div class="nav">
+                        <a href="/definition_generator">
+                            <div class='nav-link nav-link-border'>
+                                definition generator
+                            </div>
+                        </a>
+                        
+                        <a href="/spotify-playlist-utilities">
+                            <div class='nav-link'>
+                                spotify utilities
+                            </div>
+                        </a>
+                    </div>
+
+                </header>
+            </div>
+
+            <div class = "content">
+                {% block content %}{% endblock %}
+            </div>
+
+            <footer class="nav-border">
+                <div class="nav">
+                    <a href="mailto:jshe2304@gmail.com" target="_blank">
+                        <div class='nav-link nav-link-border'>
+                            email me
+                        </div>
+                    </a>
+
+                    <a href="https://github.com/jshe2304/jshen.org" target="_blank">
+                        <div class='nav-link nav-link-border'>
+                            site code
+                        </div>
+                    </a>
+
+                    <a href="https://melchin.org/oeuvre/" target="_blank">
+                        <div class='nav-link nav-link-border'>
+                            inspo
+                        </div>
+                    </a>
+
+                    <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank">
+                        <div class='nav-link'>
+                            guide i used
+                        </div>
+                    </a>
+
+                </div>
+
+            </footer>
+
         </div>
-        
-        <footer>
-            <p>Email: <a href="mailto:jshe2304@gmail.com" style="color: white;">jshe2304@gmail.com</a></p>
-        </footer>
 
     </body>
 </html>

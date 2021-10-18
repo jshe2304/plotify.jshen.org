@@ -1,0 +1,44 @@
+{
+    "description": "Having friends over for dinner? Here´s the perfect playlist.",
+    "href": "https://api.spotify.com/v1/users/spotify/playlists/59ZbFPES4DQwEjBpWHzrtC",
+    "images": [
+        {
+            "url": "https://i.scdn.co/image/68b6a65573a55095e9c0c0c33a274b18e0422736"
+        }
+    ],
+    "name": "Dinner with Friends",
+    "tracks": {
+        "href": "https://api.spotify.com/v1/users/spotify/playlists/59ZbFPES4DQwEjBpWHzrtC/tracks",
+        "items": [
+            {
+                "added_at": "2014-09-01T04:21:28Z",
+                "track": {
+                    "album": {
+                        "href": "https://api.spotify.com/v1/albums/5GWoXPsTQylMuaZ84PC563",
+                        "name": "I'm Not The Only One",
+                        "uri": "spotify:album:5GWoXPsTQylMuaZ84PC563"
+                    },
+                    "artists": [
+                        {
+                            "href": "https://api.spotify.com/v1/artists/2wY79sveU1sp5g7SokKOiI",
+                            "name": "Sam Smith",
+                            "uri": "spotify:artist:2wY79sveU1sp5g7SokKOiI"
+                        }
+                    ],
+                    "duration_ms": 204732,
+                    "href": "https://api.spotify.com/v1/tracks/4i9sYtSIlR80bxje5B3rUb",
+                    "name": "I'm Not The Only One - Radio Edit",
+                    "popularity": 45,
+                    "track_number": 1,
+                    "uri": "spotify:track:4i9sYtSIlR80bxje5B3rUb"
+                }
+            }
+        ],
+        "limit": 100,
+        "next": "https://api.spotify.com/v1/users/spotify/playlists/59ZbFPES4DQwEjBpWHzrtC/tracks?offset=100&limit=100",
+        "offset": 0,
+        "previous": null,
+        "total": 105
+    },
+    "uri": "spotify:user:spotify:playlist:59ZbFPES4DQwEjBpWHzrtC"
+}
