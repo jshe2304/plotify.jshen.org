@@ -45,23 +45,24 @@ def generatedefinitions():
 
 #Spotify Playlist Utilities
 
-@app.route('/spotify-playlist-utilities', methods=['POST', 'GET'])
+@app.route('/spotify', methods=['POST', 'GET'])
 def spotifyutilitieshome():
     return render_template('/spotify/spotify_home.html', title='Spotify Utilities')
 
 
-@app.route('/spotify-playlist-utilities/login')
+@app.route('/spotify/login')
 def spotifyutilitieslogin():
+    print ('checkpoint 1')
     query = oauth_url()
     return redirect(query)
 
-@app.route('/spotify-playlist-utilities/callback')
+@app.route('/spotify/callback')
 def spotifyutilitiescallback():
 
     response = request.args
 
     if len(response) == 0 or 'error' in response:
-        return redirect("/spotify-playlist-utilities")
+        return redirect("/spotify")
 
     code = response['code']
 
@@ -70,13 +71,13 @@ def spotifyutilitiescallback():
 
     user = current_user()
 
-    return redirect('/spotify-playlist-utilities/' + user['id'])
+    return redirect('/spotify/' + user['id'])
 
 
-@app.route('/spotify-playlist-utilities/<username>', methods=['POST', 'GET'])
+@app.route('/spotify/<username>', methods=['POST', 'GET'])
 def spotify(username):
     if not authenticated_user(username):
-        return redirect('/spotify-playlist-utilities')
+        return redirect('/spotify')
 
     refresh_library()
 
@@ -88,10 +89,10 @@ def spotify(username):
 
     return render_template('/spotify/spotify.html', playlists=playlists, public=public, private=private, albums=albums, username=username)
 
-@app.route('/spotify-playlist-utilities/<username>/combine', methods=['POST', 'GET'])
+@app.route('/spotify/<username>/combine', methods=['POST', 'GET'])
 def spotifycombine(username):
     if not authenticated_user(username):
-        return redirect('/spotify-playlist-utilities')
+        return redirect('/spotify')
 
     playlists = get_playlists()
     albums = get_albums()
@@ -121,16 +122,16 @@ def spotifycombine(username):
 
         refresh_library()
 
-        return redirect('/spotify-playlist-utilities/' + username)
+        return redirect('/spotify/' + username)
 
     return render_template('/spotify/spotify_combine.html', form=form, playlists=playlists, albums=albums)
 
-@app.route('/spotify-playlist-utilities/<username>/<playlist_id>', methods = ['POST', 'GET'])
+@app.route('/spotify/<username>/<playlist_id>', methods = ['POST', 'GET'])
 def spotifyplaylist(username, playlist_id):
     if not authenticated_user(username):
-        return redirect('/spotify-playlist-utilities')
+        return redirect('/spotify')
     if not valid_playlist(playlist_id):
-        return redirect('/spotify-playlist-utilities/' + username)
+        return redirect('/spotify/' + username)
 
     tracks = playlist_tracks(playlist_id)
 
@@ -142,38 +143,38 @@ def spotifyplaylist(username, playlist_id):
 
     return render_template('/spotify/spotify_playlist.html', username=username, playlist_name=playlist_name(playlist_id), id = playlist_id, plots=plots)
 
-@app.route('/spotify-playlist-utilities/<username>/<playlist_id>/utilities', methods = ['POST', 'GET'])
+@app.route('/spotify/<username>/<playlist_id>/utilities', methods = ['POST', 'GET'])
 def spotifyutilities(username, playlist_id):
     if not authenticated_user(username):
-        return redirect('/spotify-playlist-utilities')
+        return redirect('/spotify')
     if not valid_playlist(playlist_id):
-        return redirect('/spotify-playlist-utilities/' + username)
+        return redirect('/spotify/' + username)
 
     return render_template('/spotify/spotify_playlist_utilities.html', username=username, id=playlist_id)
 
-@app.route('/spotify-playlist-utilities/<username>/<playlist_id>/shuffle', methods = ['POST', 'GET'])
+@app.route('/spotify/<username>/<playlist_id>/shuffle', methods = ['POST', 'GET'])
 def spotifyshuffle(username, playlist_id):
     if not authenticated_user(username):
-        return redirect('/spotify-playlist-utilities')
+        return redirect('/spotify')
     if not valid_playlist(playlist_id):
-        return redirect('/spotify-playlist-utilities/' + username)
+        return redirect('/spotify/' + username)
 
     shuffle_playlist(playlist_id)
 
     refresh_library()
 
-    return redirect('/spotify-playlist-utilities/' + username + "/" + playlist_id + "/utilities")
+    return redirect('/spotify/' + username + "/" + playlist_id + "/utilities")
 
-@app.route('/spotify-playlist-utilities/<username>/<playlist_id>/reorganize/<characteristic>', methods = ['POST', 'GET'])
+@app.route('/spotify/<username>/<playlist_id>/reorganize/<characteristic>', methods = ['POST', 'GET'])
 def spotifyreorganize(username, playlist_id, characteristic):
     if not authenticated_user(username):
-        return redirect('/spotify-playlist-utilities')
+        return redirect('/spotify')
     if not valid_playlist(playlist_id):
-        return redirect('/spotify-playlist-utilities/' + username)
+        return redirect('/spotify/' + username)
 
     if characteristic == 'date':
         reorganize_playlist(playlist_id, 'date')
     elif characteristic == 'rdate':
         reorganize_playlist(playlist_id, 'rdate')
 
-    return redirect('/spotify-playlist-utilities/' + username + "/" + playlist_id)
+    return redirect('/spotify/' + username + "/" + playlist_id)

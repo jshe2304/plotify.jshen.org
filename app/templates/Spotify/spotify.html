@@ -6,7 +6,7 @@
             <h2>{{ username }}</h2>
 
             <div>
-                <input type="button" value="combine items" onclick="location.href='/spotify-playlist-utilities/{{ username }}/combine';"/>
+                <input type="button" value="combine items" onclick="location.href='/spotify/{{ username }}/combine';"/>
             </div>
 
             <div class="grid-container">
@@ -21,9 +21,9 @@
                                         {% set id = playlist['id'] %}
                                         {% if playlist['images']|length != 0 %}
                                             {% set img_url = playlist['images'][0]['url'] %}
-                                            <input type="image" src="{{ img_url }}" alt="Playlist" class="library-playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
+                                            <input type="image" src="{{ img_url }}" alt="Playlist" class="library-playlist" onclick="location.href='/spotify/{{ username }}/{{ id }}';" width=50px height=50px>
                                         {% endif %}
-                                            <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
+                                            <a href='/spotify/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
                                     </div>
                                 {% endfor %}
                         {% endif %}
@@ -36,8 +36,8 @@
                                 <div class="center-vertical">
                                     {% set id = playlist['id'] %}
                                     {% set img_url = playlist['images'][0]['url'] %}
-                                    <input type="image" src="{{ img_url }}" alt="Playlist" class="library-playlist" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}';" width=50px height=50px>
-                                    <a href='/spotify-playlist-utilities/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
+                                    <input type="image" src="{{ img_url }}" alt="Playlist" class="library-playlist" onclick="location.href='/spotify/{{ username }}/{{ id }}';" width=50px height=50px>
+                                    <a href='/spotify/{{ username }}/{{ id }}'>{{ playlist['name'] }}</a>
                                 </div>
                             {% endfor %}
                         {% endif %}
