@@ -5,7 +5,7 @@
         <h3>{{ playlist_name }}</h3>
         
         <div>
-            <input type="button" value="Playlist Utilities" onclick="location.href='/spotify-playlist-utilities/{{ username }}/{{ id }}/utilities';"/>
+            <input type="button" value="some playlist tools" onclick="location.href='/spotify/{{ username }}/{{ id }}/utilities';"/>
         </div>
         
         {% for plot in plots %}
@@ -13,14 +13,19 @@
 
                 <div class="plot">
                     <div>
-                        <div class="plot">
+                        <div>
                             <h3>{{ plot['title'] }}</h3>
-                            
+                        </div>
+
+                        <div>
+                            <img src="data:image/png;base64,{{ plot['plot'] }}" alt='plot'/>
                         </div>
                         
-
-
-                        <img src="data:image/png;base64,{{ plot['plot'] }}" alt='plot'/>
+                        {% if plot['description'] != '' %}
+                            <div>
+                                {{ plot['description'] }}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="center-vertical">
@@ -36,11 +41,7 @@
 
                 </div>
                 
-                {% if plot['description'] != '' %}
-                    <div>
-                        {{ plot['description'] }}
-                    </div>
-                {% endif %}
+                
                 
             </div>
         {% endfor %}

@@ -58,6 +58,7 @@ access_token = auth_response_data['access_token']
 #OAuth Query Parameters
 response_type = "code"
 redirect_uri = "https://www.jshen.org/spotify/callback"
+#redirect_uri = "http://localhost:5000/spotify/callback"
 scopes = "ugc-image-upload user-read-recently-played user-top-read playlist-modify playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative user-follow-read user-library-modify user-library-read user-read-private"
 
 albums = []

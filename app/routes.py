@@ -4,7 +4,7 @@ from flask.helpers import url_for
 from flask import render_template, flash, request, redirect, send_from_directory
 
 from app import app
-from app.forms import DefGeneratorForm, SpotifyCombineForm
+from app.forms import DefGeneratorForm, SpotifyGdprForm
 from werkzeug.utils import secure_filename
 from app.functions.defgenerator import *
 from app.functions.spotifyutil import *
@@ -20,8 +20,8 @@ def home():
 
 #Definition Generator
 
-@app.route('/definition_generator', methods=['POST', 'GET'])
-def generatedefinitions():
+@app.route('/definitions', methods=['POST', 'GET'])
+def definitions():
     form = DefGeneratorForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -30,34 +30,55 @@ def generatedefinitions():
             separator = form.separator.data
             file = request.files['file']
             filename = secure_filename(file.filename)
-            if filename[-4:].split(".")[-1] in app.config['ALLOWED_EXTENSIONS']:
+            if filename[-4:].split(".")[-1] in app.config['DEFINITIONS_ALLOWED_EXTENSIONS']:
                 
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 generate_definitions(def_source, omit_term, separator, filename)
             
                 return send_from_directory(app.config["DOWNLOAD_FOLDER"], path = "definitions.pdf", as_attachment=True)
             else:
-                flash ("File Extension Not Supported")
+                flash ("bad file. check extension")
         else:
-            flash("Field Required")
-    return render_template('def_generator.html', title = 'Generate Definitions For List of Terms', form=form)
+            flash("i aint got all day bub. hand the file over")
+    return render_template('definitions.html', title = 'Generate Definitions For List of Terms', form=form)
 
 
-#Spotify Playlist Utilities
+#Spotify
 
 @app.route('/spotify', methods=['POST', 'GET'])
-def spotifyutilitieshome():
+def spotifyhome():
     return render_template('/spotify/spotify_home.html', title='Spotify Utilities')
 
 
+@app.route('/spotify/gdpr', methods=['POST', 'GET'])
+def spotifygdprhome():
+    form = SpotifyGdprForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            if filename[-4:] in app.config['SPOTIFY_GDPR_ALLOWED_EXTENSIONS']:
+                
+                render_template()
+            else:
+                flash ("bad file. check file extension")
+        else:
+            flash("gimme something, punk")
+    return render_template('/spotify/spotify_gdpr.html', form=form)
+
+@app.route('/spotify/gdpr/analysis')
+def spotifygdpranalysis():
+    return render_template('/spotify/spotify_gdpr_analysis.html')
+
+
 @app.route('/spotify/login')
-def spotifyutilitieslogin():
+def spotifylogin():
     print ('checkpoint 1')
     query = oauth_url()
     return redirect(query)
 
 @app.route('/spotify/callback')
-def spotifyutilitiescallback():
+def spotifycallback():
 
     response = request.args
 
@@ -139,12 +160,17 @@ def spotifyplaylist(username, playlist_id):
     valences = audio_features(tracks, 'valence')
 
 
-    plots = [dates_analysis(data['release dates']), valence_analysis(valences), date_valence_analysis(data['release dates'], valences), popularity_analysis(data['popularities'])]
+    plots = [
+        dates_analysis(data['release dates']), 
+        valence_analysis(valences), 
+        #date_valence_analysis(data['release dates'], valences), 
+        popularity_analysis(data['popularities'])
+    ]
 
     return render_template('/spotify/spotify_playlist.html', username=username, playlist_name=playlist_name(playlist_id), id = playlist_id, plots=plots)
 
 @app.route('/spotify/<username>/<playlist_id>/utilities', methods = ['POST', 'GET'])
-def spotifyutilities(username, playlist_id):
+def spotifyplaylistutilities(username, playlist_id):
     if not authenticated_user(username):
         return redirect('/spotify')
     if not valid_playlist(playlist_id):

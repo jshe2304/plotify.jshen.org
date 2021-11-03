@@ -9,7 +9,8 @@ class Config (object):
     UPLOAD_FOLDER = join(CLIENT_FOLDER, "upload")
     DOWNLOAD_FOLDER = join(CLIENT_FOLDER, "download")
 
-    ALLOWED_EXTENSIONS = ['docx', 'pdf', 'txt']
+    DEFINITIONS_ALLOWED_EXTENSIONS = ['docx', 'pdf', 'txt']
+    SPOTIFY_GDPR_ALLOWED_EXTENSIONS = ['json']
     MAX_CONTENT_LENGTH = 20 * 1024 * 1024
 
     SPOTIFY_CLIENT_ID = '4ed7461ce6fc46b9b5fc1cff6e08d2a5'

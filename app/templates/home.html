@@ -1,8 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="inner">
-            <h1>Welcome!</h1>
+    {% set links = [
+        'https://www.coolmathgames.com/', 
+        'https://www.youtube.com/watch?v=eN7dYDYfvVg', 
+        'https://www.youtube.com/watch?v=6gtSe9NXkUg', 
+        'https://www.youtube.com/watch?v=dcfV6yUUMhs', 
+        'https://ninjakiwi.com/Games/Tower-Defense/Bloons-Tower-Defense-5.html', 
+        'https://open.spotify.com/user/fro8ozz',
+        'https://open.spotify.com/album/1yfJqxKKXG320vhqLfUEeC',
+        'https://www.shitpostbot.com/resize/585/400?img=%2Fimg%2Fsourceimages%2Fthom-yorke-screaming-57c4d13961f43.png'
+        ]%}
+    <div>
+
+        <div style="margin-top:1em">
+            
+            <div style="margin:1em">
+                <div>
+                    the stars are for touching
+                </div>
+            </div>
+
+            {% for i in range(1,50) %}
+                <div style="margin-left: {{ range(1, 100) | random }}%">
+                    <a href="{{ links | random }}">*</a>
+                </div>
+            {% endfor %}
+          </div>
     </div>
 
 {% endblock %}
