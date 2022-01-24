@@ -8,6 +8,9 @@ class Config (object):
     CLIENT_FOLDER = join(abspath, "app/client")
     UPLOAD_FOLDER = join(CLIENT_FOLDER, "upload")
     DOWNLOAD_FOLDER = join(CLIENT_FOLDER, "download")
+    STREAMING_HISTORY_FOLDER = join(CLIENT_FOLDER, "streaminghistory")
+
+    IMAGES_FOLDER = join(abspath, "app/static/images")
 
     DEFINITIONS_ALLOWED_EXTENSIONS = ['docx', 'pdf', 'txt']
     SPOTIFY_GDPR_ALLOWED_EXTENSIONS = ['json']

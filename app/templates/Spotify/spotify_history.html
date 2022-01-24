@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <form action="" method="POST" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div id="file" class="section">
+                <h3>
+                    {{ form.files.label }}
+                </h3>
+                <div class="standout inset">
+                    {{ form.files(class_="link-button") }}
+                </div>
+            </div>
+
+            <div id="flash">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <span>{{ message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <div id="submit" class="">
+                {{ form.submit(class_="link-button") }}
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

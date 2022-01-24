@@ -1,26 +1,44 @@
 import os
 from random import choices
 from flask.helpers import url_for
-from flask import render_template, flash, request, redirect, send_from_directory
+from flask import render_template, flash, request, redirect, send_from_directory, send_file
 
 from app import app
-from app.forms import DefGeneratorForm, SpotifyGdprForm
+from app.forms import DefGeneratorForm, SpotifyGdprForm, SpotifyCombineForm
 from werkzeug.utils import secure_filename
 from app.functions.defgenerator import *
 from app.functions.spotifyutil import *
 from wtforms import BooleanField
+
+from os.path import join
+
 
 #Home Page
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html', title = 'Home')
+    return render_template('home2.html', title = 'Home')
+
+
+#Personal
+
+@app.route('/cv')
+def cv():
+    return render_template('personal/cv.html')
+
+
+#Gallery
+
+@app.route('/gallery/<plot>')
+def gallery(plot):
+    return send_file(join(app.config['IMAGES_FOLDER'], plot), mimetype='image/gif')
 
 
 #Definition Generator
 
 @app.route('/definitions', methods=['POST', 'GET'])
+@app.route('/terminator', methods=['POST', 'GET'])
 def definitions():
     form = DefGeneratorForm()
     if request.method == 'POST':
@@ -31,49 +49,47 @@ def definitions():
             file = request.files['file']
             filename = secure_filename(file.filename)
             if filename[-4:].split(".")[-1] in app.config['DEFINITIONS_ALLOWED_EXTENSIONS']:
-                
+
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 generate_definitions(def_source, omit_term, separator, filename)
-            
+
                 return send_from_directory(app.config["DOWNLOAD_FOLDER"], path = "definitions.pdf", as_attachment=True)
             else:
-                flash ("bad file. check extension")
+                flash ("bad file, awful file even. check extension")
         else:
-            flash("i aint got all day bub. hand the file over")
+            flash("hand the file over. cmon now")
     return render_template('definitions.html', title = 'Generate Definitions For List of Terms', form=form)
 
 
 #Spotify
 
 @app.route('/spotify', methods=['POST', 'GET'])
+@app.route('/statify', methods=['POST', 'GET'])
 def spotifyhome():
     return render_template('/spotify/spotify_home.html', title='Spotify Utilities')
 
-
-@app.route('/spotify/gdpr', methods=['POST', 'GET'])
-def spotifygdprhome():
+@app.route('/spotify/history', methods=['POST', 'GET'])
+def spotifyhistory():
     form = SpotifyGdprForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            file = request.files['file']
-            filename = secure_filename(file.filename)
-            if filename[-4:] in app.config['SPOTIFY_GDPR_ALLOWED_EXTENSIONS']:
-                
-                render_template()
-            else:
-                flash ("bad file. check file extension")
+            for f in form.files.data:
+                filename = secure_filename(f.filename)
+                if filename[-4:] in app.config['SPOTIFY_GDPR_ALLOWED_EXTENSIONS']:
+                    f.save(os.path.join(app.config['STREAMING_HISTORY_FOLDER'], filename))
+                else:
+                    flash ("bad file. check file extension")
+            return redirect('/spotify/history/analysis', history_analysis())
         else:
             flash("gimme something, punk")
-    return render_template('/spotify/spotify_gdpr.html', form=form)
+    return render_template('/spotify/spotify_history.html', form=form)
 
-@app.route('/spotify/gdpr/analysis')
-def spotifygdpranalysis():
-    return render_template('/spotify/spotify_gdpr_analysis.html')
-
+@app.route('/spotify/history/analysis')
+def spotifyhistoryanalysis(stream):
+    return render_template('/spotify/spotify_history_analysis.html')
 
 @app.route('/spotify/login')
 def spotifylogin():
-    print ('checkpoint 1')
     query = oauth_url()
     return redirect(query)
 
@@ -94,7 +110,6 @@ def spotifycallback():
 
     return redirect('/spotify/' + user['id'])
 
-
 @app.route('/spotify/<username>', methods=['POST', 'GET'])
 def spotify(username):
     if not authenticated_user(username):
@@ -112,11 +127,15 @@ def spotify(username):
 
 @app.route('/spotify/<username>/combine', methods=['POST', 'GET'])
 def spotifycombine(username):
+    print ('0')
+
     if not authenticated_user(username):
         return redirect('/spotify')
 
     playlists = get_playlists()
     albums = get_albums()
+
+    print ('1')
 
     class SpotifyCombineInstance(SpotifyCombineForm):
         pass
@@ -144,6 +163,8 @@ def spotifycombine(username):
         refresh_library()
 
         return redirect('/spotify/' + username)
+
+    print ('2')
 
     return render_template('/spotify/spotify_combine.html', form=form, playlists=playlists, albums=albums)
 

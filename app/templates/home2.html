@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel = "stylesheet" href = "{{ url_for('static', filename='css/home.css') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+    </head>
+
+    <body>
+
+        <div class="bg">
+            <div class="content">
+                <div class="title prio">
+                    <h1 class="title">jshe(n)</h1>
+                </div>
+                    
+                <div class="line">
+                        <div class="contacts">
+                            <div class="prio">
+                                <div class="section-title">
+                                    <h3>contacts</h3>
+                                </div>
+
+                                <div>
+                                    <a href="mailto:jshe2304@gmail.com">email</a>
+                                </div>
+
+                                <div>
+                                    <a href="https://github.com/jshe2304">github</a>
+                                </div>
+
+                                <div>
+                                    <a href="https://github.com/jshe2304/jshen.org">source code</a>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="line">
+                        <div class="projects">
+
+                            <div class="prio">
+                                <div class="section-title">
+                                    <h3>
+                                        projects
+                                    </h3>
+                                </div>
+
+                                <div>
+                                    <a href="/statify">
+                                        statify
+                                    </a>
+                                </div>
+
+                                <div>
+                                    <a href="/terminator">
+                                        term(inator)
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                </div>
+                
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/home_script.js') }}"></script> 
+    </body>
+</html>

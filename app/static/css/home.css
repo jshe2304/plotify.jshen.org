@@ -1,0 +1,91 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    background-color: rgb(25, 25, 25);
+    overflow: hidden;
+}
+
+.bg {
+    margin:0;
+    padding:0;
+
+    /* The image used */
+    background-image: url("spire3.png");
+
+    /* Full height */
+    height: 100%; 
+
+    /* Center and scale the image nicely */
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+}
+
+a {
+    background-color: white;
+    color:inherit;
+}
+
+.content {
+    width: 100%;
+}
+
+.prio {
+    position: relative;
+    z-index: 99;
+}
+
+div.topbuffer {
+    margin-top:0;
+    margin-bottom: 1em;
+    margin-left: 25%;
+}
+
+div.title {
+    margin-left: 30%;
+}
+
+h1.title {
+    color: white;
+    margin: 1em;
+    margin-top:2em;
+}
+
+.contacts {
+    background-color: white;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 65%;
+    padding:1em;
+}
+
+.projects {
+    background-color: white;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 70%;
+    padding:1em;
+    margin-top: 10%;
+}
+
+.section-title {
+    background-color: black;
+    color:white;
+    padding-left:1em;
+    padding-right:1em;
+}
+
+div.box {
+    background-image: url("sky.jpg");
+    position: fixed;
+    min-width: 5em;
+    min-height: 5em;
+    top: 50%;
+    left: 50%;
+    background-color: red;
+}
+
+div.box:hover {
+    background-image: none;
+}

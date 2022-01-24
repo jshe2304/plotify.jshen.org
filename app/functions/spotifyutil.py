@@ -3,12 +3,14 @@ import requests
 from urllib.parse import urlencode, quote
 import random
 
+import os
 import numpy as np
 #import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from io import StringIO, BytesIO
 import base64
+import json
 
 from requests.api import get, head
 
@@ -510,3 +512,13 @@ def popularity_analysis(popularities):
 def top_songs ():
     for track in unpage(requests.get('https://api.spotify.com/v1/me/top/tracks', params={'time_range': 'long_term'}, headers=get_header()).json(), None):
         print (track['name'])
+
+#GDPR Analytics
+
+def history_analysis():
+    data = []
+
+    for filename in os.listdir(app.config['STREAMING_HISTORY_FOLDER']):
+        data += json.load(open(app.config['STREAMING_HISTORY_FOLDER'] + '/' + filename))
+
+    print(len(data))

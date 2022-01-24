@@ -10,5 +10,8 @@ class DefGeneratorForm(FlaskForm):
     submit = SubmitField('process file')
 
 class SpotifyGdprForm(FlaskForm):
-    file = MultipleFileField('input json files', validators=[DataRequired()])
+    files = MultipleFileField('input json files', validators=[DataRequired()])
     submit = SubmitField('submit json files')
+
+class SpotifyCombineForm(FlaskForm):
+    None 
